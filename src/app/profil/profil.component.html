@@ -1,0 +1,93 @@
+<div class="row mt-3">
+  <div class="col-md-8">
+    <div>
+      <form [formGroup]="userForm" (ngSubmit)="onSubmitForm()" style="margin: 20px">
+        <h3>Mes infos</h3>
+        <mat-error *ngIf="error!=''">{{error}}</mat-error>
+        <div class="form-group">
+          <mat-form-field class="btn-block" >
+            <input matInput type="text" value="{{user.name}}" formControlName="name" #name placeholder="Nom">
+            <mat-error *ngIf="submitted && userForm.controls.name.errors">
+              <mat-error *ngIf="userForm.controls.name.errors.required">Le champs nom est <strong>requis</strong></mat-error>
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="form-group">
+          <mat-form-field class="btn-block" >
+            <input matInput type="text" formControlName="subname" value="{{user.subname}}" #subname placeholder="Prénom">
+          </mat-form-field>
+        </div>
+
+        <div class="form-group">
+          <mat-form-field class="btn-block" >
+            <input type="password" formControlName="password" matInput placeholder="mot de passe" #password value="{{user.password}}">
+            <mat-error *ngIf="submitted && userForm.controls.password.errors">
+              <mat-error *ngIf="userForm.controls.password.errors.minlength">Le mot de passe doit commprendre au moins <strong>6 caractères</strong></mat-error>
+              <mat-error *ngIf="userForm.controls.password.errors.required">Le mot de passe est <strong>requis</strong></mat-error>
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-group">
+          <mat-form-field class="btn-block" >
+            <input type="text" formControlName="fonction" matInput placeholder="Fonction" #fonction value="{{user.fonction}}">
+            <mat-error *ngIf="submitted && userForm.controls.fonction.errors">
+              <mat-error *ngIf="userForm.controls.fonction.errors.required">Champs fonction <strong>requis</strong></mat-error>
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-group">
+          <mat-form-field class="btn-block" >
+            <mat-select placeholder="Droit" [(value)]="user.type" formControlName="type">
+              <mat-option value="Employé" aria-selected="true" >Employé</mat-option>
+              <mat-option value="Admin">Admin</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="form-group">
+          <mat-form-field class="btn-block" >
+            <input matInput placeholder="Téléphone" formControlName="tel" value="{{user.tel}}" type="tel">
+            <mat-error *ngIf="submitted && userForm.controls.tel.errors">
+              <mat-error *ngIf="userForm.controls.tel.errors.pattern">Renseignez un numéro de téléphone <strong>valide</strong></mat-error>
+              <mat-error *ngIf="userForm.controls.tel.errors.required">Le champs numéro est <strong>requis</strong></mat-error>
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-group">
+          <mat-form-field class="btn-block" >
+            <input matInput placeholder="Email" formControlName="email" value="{{user.email}}" type="text">
+            <mat-hint>xxxx@xxx.com</mat-hint>
+            <mat-error *ngIf="submitted && userForm.controls.email.errors">
+              <mat-error *ngIf="userForm.controls.email.errors.email">Renseignez une adresse email <strong>valide</strong></mat-error>
+              <mat-error *ngIf="userForm.controls.email.errors.required">L'email est <strong>requis</strong></mat-error>
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="form-group text-center">
+          <button mat-button color="primary" type="submit">Enregistrez les modifications <mat-icon>good</mat-icon></button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <img src="" alt="Photo">
+    <h2>{{user.subname}} {{user.name}}</h2>
+    <mat-chip-list>
+      <mat-chip class="bg-success text-light">{{user.fonction}}</mat-chip>
+      <mat-chip class="bg-info text-light" color="accent">{{user.type}}</mat-chip>
+    </mat-chip-list>
+    <br>
+    <div>
+      <span class="text-primary"><a href="tel:{{user.tel}}" mat-button ><mat-icon>phone</mat-icon> {{user.tel}}</a></span>
+      <span class="text-primary"><a href="mailto:{{user.email}}" mat-button><mat-icon>email</mat-icon> {{user.email}}</a></span>
+    </div>
+    <p>
+      Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet blanditiis cumque laboriosam minus natus neque odit quae soluta sunt tenetur. A alias, aperiam at autem magni omnis praesentium sed. Eaque.
+    </p>
+    <p class="text-center"><small>@MyWare</small></p>
+  </div>
+</div>

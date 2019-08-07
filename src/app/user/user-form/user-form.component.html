@@ -1,0 +1,62 @@
+<div class="row">
+  <div class="col-md-4 offset-md-4">
+    <form class="example-container" [formGroup]="userForm" (ngSubmit)="onSubmitForm()">
+      <h3>Utilisateur</h3>
+      <mat-error *ngIf="error!=''">{{error}}</mat-error>
+      <mat-form-field>
+        <input matInput type="text" value="{{user.name}}" formControlName="name" #name placeholder="Nom">
+          <mat-error *ngIf="submitted && userForm.controls.name.errors">
+              <mat-error *ngIf="userForm.controls.name.errors.required">Le champs nom est <strong>requis</strong></mat-error>
+          </mat-error>
+      </mat-form-field>
+
+      <mat-form-field>
+        <input matInput type="text" formControlName="subname" value="{{user.subname}}" #subname placeholder="Prénom">
+      </mat-form-field>
+
+      <mat-form-field>
+        <input type="password" formControlName="password" matInput placeholder="mot de passe" #password value="{{user.password}}">
+          <mat-error *ngIf="submitted && userForm.controls.password.errors">
+              <mat-error *ngIf="userForm.controls.password.errors.minlength">Le mot de passe doit commprendre au moins <strong>6 caractères</strong></mat-error>
+              <mat-error *ngIf="userForm.controls.password.errors.required">Le mot de passe est <strong>requis</strong></mat-error>
+          </mat-error>
+      </mat-form-field>
+
+      <mat-form-field>
+        <input type="text" formControlName="fonction" matInput placeholder="Fonction" #fonction value="{{user.fonction}}">
+          <mat-error *ngIf="submitted && userForm.controls.fonction.errors">
+              <mat-error *ngIf="userForm.controls.fonction.errors.required">Champs fonction <strong>requis</strong></mat-error>
+          </mat-error>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-select placeholder="Droit" [(value)]="user.type" formControlName="type">
+          <mat-option value="Employé" aria-selected="true" >Employé</mat-option>
+          <mat-option value="Admin">Admin</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field>
+        <input matInput placeholder="Téléphone" formControlName="tel" value="{{user.tel}}" type="tel">
+          <mat-error *ngIf="submitted && userForm.controls.tel.errors">
+              <mat-error *ngIf="userForm.controls.tel.errors.pattern">Renseignez un numéro de téléphone <strong>valide</strong></mat-error>
+              <mat-error *ngIf="userForm.controls.tel.errors.required">Le champs numéro est <strong>requis</strong></mat-error>
+          </mat-error>
+      </mat-form-field>
+
+      <mat-form-field>
+        <input matInput placeholder="Email" formControlName="email" value="{{user.email}}" type="text">
+        <mat-hint>xxxx@xxx.com</mat-hint>
+        <mat-error *ngIf="submitted && userForm.controls.email.errors">
+            <mat-error *ngIf="userForm.controls.email.errors.email">Renseignez une adresse email <strong>valide</strong></mat-error>
+            <mat-error *ngIf="userForm.controls.email.errors.required">L'email est <strong>requis</strong></mat-error>
+        </mat-error>
+      </mat-form-field>
+      <div class="text-center">
+        <button mat-button color="primary" type="submit">Enregistrer <mat-icon>good</mat-icon></button>
+        <button mat-button class="text-danger" (click)="onCancel()" type="button">Annuler <mat-icon>Cancel</mat-icon></button>
+      </div>
+    </form>
+  </div>
+</div>
+

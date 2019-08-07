@@ -1,0 +1,10 @@
+<mat-action-list>
+  <button mat-list-item (click)="gotoFiles()" style="color: #eaeaea;"><mat-icon>folder</mat-icon>Fichiers</button>
+  <button mat-list-item (click)="gotoGroups()" style="color: #eaeaea;"><mat-icon>group</mat-icon> Groupes </button>
+  <button mat-list-item (click)="gotoDiscussion()" style="color: #eaeaea;"><mat-icon>chat</mat-icon> Discussion directe </button>
+  <button mat-list-item (click)="gotoTask()" style="color: #eaeaea;"><mat-icon>alarm</mat-icon> Tâches </button>
+  <button mat-list-item (click)="gotoUsers()" style="color: #eaeaea;"><mat-icon>face</mat-icon> Gerez les utilisateurs </button>
+</mat-action-list>
+<p style="text-align: center">
+  <button mat-raised-button (click)="onDisconnect()">Déconnexion</button>
+</p>

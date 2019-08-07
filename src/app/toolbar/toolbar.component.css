@@ -1,0 +1,13 @@
+.example-fill-remaining-space {
+    /* This fills the remaining space, by using flexbox.
+       Every toolbar row uses a flexbox row layout. */
+    flex: 1 1 auto;
+}
+/** No CSS for this example */
+.alarm-dropdown {
+    position: absolute;
+    padding: 4px 8px;
+}
+.alarm-dropdown /deep/.mat-select-arrow-wrapper {
+    visibility: hidden;
+}
