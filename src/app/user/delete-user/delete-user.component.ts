@@ -11,13 +11,13 @@ import {Constant} from '../../model/constant';
 })
 export class DeleteUserComponent implements OnInit {
 
-    constructor(
-        private userService: UserService,
-        public dialogRef: MatDialogRef<DeleteUserComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: User) {}
+  constructor(
+      private userService: UserService,
+      public dialogRef: MatDialogRef<DeleteUserComponent>,
+      @Inject(MAT_DIALOG_DATA) public data: User) {}
 
   onNoClick(): void {
-      this.dialogRef.close();
+      this.dialogRef.close(Constant.MESSAGE_BAD);
   }
   onDeleteUser(): void {
     this.userService.delete(this.data).subscribe(

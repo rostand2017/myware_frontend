@@ -27,6 +27,10 @@ import { DeleteUserComponent } from './user/delete-user/delete-user.component';
 import {HttpClientModule} from '@angular/common/http';
 import { ProfilComponent } from './profil/profil.component';
 import { ChangePasswordComponent } from './change-password/change-password.component';
+import { GroupComponent } from './group/group.component';
+import { DeleteGroupComponent } from './group/delete-group/delete-group.component';
+import { GroupFromComponent } from './group/group-from/group-from.component';
+import {GroupService} from './services/group.service';
 
 @NgModule({
   declarations: [
@@ -38,9 +42,17 @@ import { ChangePasswordComponent } from './change-password/change-password.compo
     UserFormComponent,
     DeleteUserComponent,
     ProfilComponent,
-    ChangePasswordComponent
+    ChangePasswordComponent,
+    GroupComponent,
+    DeleteGroupComponent,
+    GroupFromComponent
   ],
-  entryComponents: [UserFormComponent, DeleteUserComponent],
+  entryComponents: [
+      UserFormComponent,
+      DeleteUserComponent,
+      GroupFromComponent,
+      DeleteGroupComponent,
+  ],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -71,6 +83,7 @@ import { ChangePasswordComponent } from './change-password/change-password.compo
   ],
   providers: [
       UserService,
+      GroupService,
   ],
   bootstrap: [AppComponent]
 })

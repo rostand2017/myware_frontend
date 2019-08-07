@@ -1,0 +1,23 @@
+<div class="row">
+  <div class="col-md-8 offset-md-2">
+    <form class="example-container" [formGroup]="groupForm" (ngSubmit)="onSubmitForm()">
+      <h3>Groupe</h3>
+      <mat-error *ngIf="error!=''">{{error}}</mat-error>
+      <mat-form-field>
+        <input matInput type="text" value="{{group.name}}" formControlName="name" #name placeholder="Nom du groupe">
+        <mat-error *ngIf="submitted && groupForm.controls.name.errors">
+          <mat-error *ngIf="groupForm.controls.name.errors.required">Le champs nom est <strong>requis</strong></mat-error>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <textarea matInput type="text" value="{{group.description}}" formControlName="description" placeholder="Description du groupe"></textarea>
+      </mat-form-field>
+
+      <div class="text-center">
+        <button mat-button color="primary" type="submit">Enregistrer<mat-icon>good</mat-icon></button>
+        <button mat-button class="text-danger" (click)="onCancel()" type="button">Annuler <mat-icon>Cancel</mat-icon></button>
+      </div>
+    </form>
+  </div>
+</div>
+

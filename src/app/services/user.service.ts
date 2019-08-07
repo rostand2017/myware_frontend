@@ -26,8 +26,14 @@ export class UserService {
   }
   add(user: User): Observable<User> {
       return this.http.post<User>(this.heroesUrl, user, this.httpOptions).pipe(
-          tap( (_user: User) => this.log(`fetched hero id=${_user.key}`)),
+          tap( (_user: User) => this.log(`fetched user id=${_user.key}`)),
           catchError(this.handleError<User>('error'))
+      );
+  }
+  changePassword(newPassword: String): Observable<any> {
+      return this.http.post<any>(this.heroesUrl, newPassword, this.httpOptions).pipe(
+          tap( ( data: any) => this.log(`fetched password`)),
+          catchError(this.handleError<any>('error'))
       );
   }
   getUser(): Observable<User> {
