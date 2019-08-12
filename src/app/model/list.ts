@@ -1,12 +1,14 @@
-export class Group {
+import {Task} from './task';
+
+export class List {
     private _key: String = '';
     private _name: String = '';
-    private _description: String = '';
+    private _task: Task[] = [];
 
-    constructor(key: String, name: String, description: String) {
+    constructor(key: String, name: String, task: Task[]) {
         this._key = key;
         this._name = name;
-        this._description = description;
+        this._task = task;
     }
 
     get key(): String {
@@ -25,11 +27,11 @@ export class Group {
         this._name = value;
     }
 
-    get description(): String {
-        return this._description;
+    get task(): Task[] {
+        return this._task;
     }
 
-    set description(value: String) {
-        this._description = value;
+    set task(value: Task[]) {
+        this._task = value;
     }
 }

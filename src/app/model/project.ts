@@ -1,12 +1,22 @@
-export class Group {
+import {Group} from './group';
+
+export class Project {
     private _key: String = '';
     private _name: String = '';
-    private _description: String = '';
+    private _group: Group[] = [];
 
-    constructor(key: String, name: String, description: String) {
+    constructor(key: String, name: String, group: Group[]) {
         this._key = key;
         this._name = name;
-        this._description = description;
+        this._group = group;
+    }
+
+    get group(): Group[] {
+        return this._group;
+    }
+
+    set group(value: Group[]) {
+        this._group = value;
     }
 
     get key(): String {
@@ -23,13 +33,5 @@ export class Group {
 
     set name(value: String) {
         this._name = value;
-    }
-
-    get description(): String {
-        return this._description;
-    }
-
-    set description(value: String) {
-        this._description = value;
     }
 }

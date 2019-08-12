@@ -14,7 +14,7 @@ export class MenuComponent implements OnInit {
   ngOnInit() {
   }
   gotoTask() {
-    this.router.navigate(['task']);
+    this.router.navigate(['project']);
   }
   gotoUsers() {
     this.router.navigate(['users']);

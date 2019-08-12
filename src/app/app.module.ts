@@ -8,11 +8,12 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {
     MatAccordion,
     MatBadgeModule,
-    MatButtonModule, MatCardModule, MatCheckboxModule, MatChipsModule, MatDialogModule, MatExpansionModule, MatFormFieldModule,
+    MatButtonModule, MatCardModule, MatCheckboxModule, MatChipsModule, MatDatepickerModule, MatDialogModule, MatExpansionModule,
+    MatFormFieldModule,
     MatGridListModule,
     MatIconModule,
     MatInputModule, MatListModule,
-    MatMenuModule, MatOptionModule,
+    MatMenuModule, MatNativeDateModule, MatOptionModule,
     MatProgressBarModule,
     MatProgressSpinnerModule, MatSelectModule,
     MatSidenavModule, MatSnackBarModule, MatTableModule, MatToolbarModule,
@@ -22,7 +23,7 @@ import { ToolbarComponent } from './toolbar/toolbar.component';
 import {UserService} from './services/user.service';
 import { UserComponent } from './user/user.component';
 import { UserFormComponent } from './user/user-form/user-form.component';
-import {ReactiveFormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { DeleteUserComponent } from './user/delete-user/delete-user.component';
 import {HttpClientModule} from '@angular/common/http';
 import { ProfilComponent } from './profil/profil.component';
@@ -31,6 +32,19 @@ import { GroupComponent } from './group/group.component';
 import { DeleteGroupComponent } from './group/delete-group/delete-group.component';
 import { GroupFromComponent } from './group/group-from/group-from.component';
 import {GroupService} from './services/group.service';
+import { TaskComponent } from './task/task.component';
+import { ProjectComponent } from './project/project.component';
+import { TaskFormComponent } from './task/task-form/task-form.component';
+import { DeleteTaskComponent } from './task/delete-task/delete-task.component';
+import { DeleteProjectComponent } from './project/delete-project/delete-project.component';
+import {ProjectService} from './services/project.service';
+import {TaskService} from './services/task.service';
+import {ProjectFormComponent} from './project/project-from/project-form.component';
+import { FilesComponent } from './files/files.component';
+import { CreateFolderComponent } from './files/create-folder/create-folder.component';
+import { DeleteFileComponent } from './files/delete-file/delete-file.component';
+import {FileService} from './services/file.service';
+import { ShareComponent } from './files/share/share.component';
 
 @NgModule({
   declarations: [
@@ -45,13 +59,30 @@ import {GroupService} from './services/group.service';
     ChangePasswordComponent,
     GroupComponent,
     DeleteGroupComponent,
-    GroupFromComponent
+    GroupFromComponent,
+    TaskComponent,
+    ProjectComponent,
+    TaskFormComponent,
+    DeleteTaskComponent,
+    ProjectFormComponent,
+    DeleteProjectComponent,
+    FilesComponent,
+    CreateFolderComponent,
+    DeleteFileComponent,
+    ShareComponent
   ],
   entryComponents: [
       UserFormComponent,
       DeleteUserComponent,
       GroupFromComponent,
       DeleteGroupComponent,
+      ProjectFormComponent,
+      DeleteProjectComponent,
+      TaskFormComponent,
+      DeleteTaskComponent,
+      CreateFolderComponent,
+      DeleteFileComponent,
+      ShareComponent,
   ],
   imports: [
     BrowserModule,
@@ -79,11 +110,17 @@ import {GroupService} from './services/group.service';
     MatOptionModule,
     MatSelectModule,
     MatGridListModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
     ReactiveFormsModule,
+    FormsModule,
   ],
   providers: [
       UserService,
       GroupService,
+      ProjectService,
+      TaskService,
+      FileService,
   ],
   bootstrap: [AppComponent]
 })

@@ -1,0 +1,35 @@
+<div class="row">
+  <div class="col-md-8 offset-md-2">
+    <form class="example-container" [formGroup]="taskForm" (ngSubmit)="onSubmitForm()">
+      <h3>Tâche</h3>
+      <mat-error *ngIf="error!=''">{{error}}</mat-error>
+      <mat-form-field>
+        <input matInput type="text" value="{{data.task.description}}" formControlName="description" #name placeholder="Description de la tâche">
+        <mat-error *ngIf="submitted && taskForm.controls.description.errors">
+          <mat-error *ngIf="taskForm.controls.description.errors.required">Le champs nom est <strong>requis</strong></mat-error>
+        </mat-error>
+      </mat-form-field>
+      <div class="form-group">
+        <mat-form-field>
+          <input matInput [matDatepicker]="picker" formControlName="endDate" placeholder="Date de fin d'accomplissement">
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+          <mat-error *ngIf="submitted && taskForm.controls.endDate.errors">
+            <mat-error *ngIf="taskForm.controls.endDate.errors.required">Le champs date est <strong>obligatoire</strong></mat-error>
+          </mat-error>
+        </mat-form-field>
+        <mat-checkbox formControlName="isCompleted" [checked]="data.task.isCompleted">Marquer comme accomplie</mat-checkbox>
+      </div>
+      <h4>Intervenant</h4>
+      <div class="form-group" *ngFor="let user of users; let i=index">
+        <mat-checkbox color="primary" [checked]="selected(user)" [value]="user.key" (change)="onCheckChange($event)">{{user.name}} </mat-checkbox>
+      </div>
+
+      <div class="text-center">
+        <button mat-button color="primary" type="submit">Enregistrer<mat-icon>check_circle</mat-icon></button>
+        <button mat-button class="text-danger" *ngIf="data.task.key == ''" (click)="onCancel()" type="button">Annuler <mat-icon>cancel</mat-icon></button>
+        <button mat-button class="text-danger" *ngIf="data.task.key != ''" (click)="onCancelTask(data.task)" type="button">Annuler la tâche<mat-icon>cancel</mat-icon></button>
+      </div>
+    </form>
+  </div>
+</div>

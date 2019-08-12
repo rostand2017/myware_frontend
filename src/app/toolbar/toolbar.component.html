@@ -2,7 +2,7 @@
   <span>MyWare</span>
   <!-- This fills the remaining space of the current row -->
   <span class="example-fill-remaining-space"></span>
-  <button mat-button [matMenuTriggerFor]="menu"><img src="" alt="user"></button>
+  <button mat-button [matMenuTriggerFor]="menu"><mat-icon style="font-size: 30px">account_circle</mat-icon><mat-icon>keyboard_arrow_down</mat-icon></button>
   <mat-menu #menu="matMenu">
     <button mat-menu-item (click)="onProfil()">Mon profil</button>
     <button mat-menu-item (click)="onChangePassword()">Changez de mot de passe</button>

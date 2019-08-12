@@ -1,0 +1,26 @@
+<div class="row">
+  <div class="col-md-12">
+    <form class="example-container" [formGroup]="fileForm" (ngSubmit)="onSubmitForm()">
+      <h4 class="text-primary" *ngIf="data.extension"><mat-icon>share</mat-icon> Partager le fichier {{data.name}} </h4>
+      <h4 class="text-primary" *ngIf="!data.extension"><mat-icon>share</mat-icon> Partager le dossier {{data.name}} </h4>
+      <mat-error *ngIf="error!=''">{{error}}</mat-error>
+      <h5>Groupes</h5>
+      <div class="table-responsive">
+        <div class="form-group" *ngFor="let group of groups; let i=index">
+          <mat-checkbox color="primary" [value]="group.key" (change)="onCheckChangeGroup($event)">{{group.name}} </mat-checkbox>
+        </div>
+      </div>
+      <h5>Utilisateurs</h5>
+      <div class="table-responsive">
+        <div class="form-group" *ngFor="let user of users; let i=index">
+          <mat-checkbox color="primary" [value]="user.key" (change)="onCheckChangeUser($event)">{{user.name}}</mat-checkbox>
+        </div>
+      </div>
+
+      <div class="text-center">
+        <button mat-button color="primary" type="submit">Partager<mat-icon>check_circle</mat-icon></button>
+        <button mat-button class="text-danger" (click)="onCancel()" type="button">Annuler <mat-icon>cancel</mat-icon></button>
+      </div>
+    </form>
+  </div>
+</div>

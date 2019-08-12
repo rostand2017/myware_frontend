@@ -1,0 +1,26 @@
+<div class="p-2">
+  <div class="row">
+    <div class="col-md-6">
+      <h4>Projets</h4>
+    </div>
+    <div class="col-md-6 text-right">
+      <button (click)="openDialog()" class="text-light text-center" style="background: #673ab7;" mat-icon-button>+</button>
+    </div>
+  </div>
+
+  <mat-card role="group" style="display: inline-block" class="m-2" *ngFor="let project of projects; let i = index" tabindex="{{i}}">
+    <mat-card-title>
+      <a routerLink="/project/{{project.key}}">{{project.name}}</a>
+      <button class="float-right" mat-icon-button [matMenuTriggerFor]="menu"><mat-icon>more_vert</mat-icon></button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="onEdit(project)">Modifier</button>
+        <button mat-menu-item (click)="onDelete(project)">Supprimer</button>
+      </mat-menu>
+    </mat-card-title>
+    <mat-card-content class="mb-3">
+      <mat-chip-list>
+        <mat-chip *ngFor="let group of project.group">{{group.name}}</mat-chip>
+      </mat-chip-list>
+    </mat-card-content>
+  </mat-card>
+</div>

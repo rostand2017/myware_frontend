@@ -8,6 +8,9 @@ import {UserComponent} from './user/user.component';
 import {ProfilComponent} from './profil/profil.component';
 import {ChangePasswordComponent} from './change-password/change-password.component';
 import {GroupComponent} from './group/group.component';
+import {ProjectComponent} from './project/project.component';
+import {TaskComponent} from './task/task.component';
+import {FilesComponent} from './files/files.component';
 
 const routes: Routes = [
     {path: '', canActivate: [LoginGuardService], component: AuthComponent},
@@ -15,6 +18,10 @@ const routes: Routes = [
     {path: 'profile', canActivate: [AuthService], component: ProfilComponent},
     {path: 'change_password', canActivate: [AuthService], component: ChangePasswordComponent},
     {path: 'groups', canActivate: [AuthService], component: GroupComponent},
+    {path: 'project', canActivate: [AuthService], component: ProjectComponent},
+    {path: 'project/:project', canActivate: [AuthService], component: TaskComponent},
+    {path: 'files', canActivate: [AuthService], component: FilesComponent},
+    {path: 'files/:folderKey', canActivate: [AuthService], component: FilesComponent},
 ];
 
 @NgModule({

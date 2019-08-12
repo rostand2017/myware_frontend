@@ -1,0 +1,8 @@
+<div mat-dialog-content>
+  <p *ngIf="data.type == 'list'">Êtes vous sûr de vouloir supprimer la liste <b>{{data.list.name}}</b> ?</p>
+  <p *ngIf="data.type == 'task'">Êtes vous sûr de vouloir supprimer la tâche: <b>{{data.task.description}}</b> ?</p>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onNoClick()">NON</button>
+  <button mat-button (click)="onDelete()"  cdkFocusInitial>OUI</button>
+</div>

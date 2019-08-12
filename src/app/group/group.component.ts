@@ -4,6 +4,7 @@ import {Group} from '../model/group';
 import {MatDialog} from '@angular/material';
 import {GroupFromComponent} from './group-from/group-from.component';
 import {DeleteGroupComponent} from './delete-group/delete-group.component';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-group',
@@ -13,25 +14,28 @@ import {DeleteGroupComponent} from './delete-group/delete-group.component';
 export class GroupComponent implements OnInit {
 
   groups: Group[];
+  group: Group;
 
-  constructor(public dialog: MatDialog, private groupService: GroupService) { }
+  constructor(public dialog: MatDialog, private groupService: GroupService, private router: Router) { }
 
     ngOnInit() {
       this.getGroups();
     }
     getGroups() {
         this.groups = this.groupService.getGroups();
+        // alert(this.groups[0].name);
     }
 
-    openDialog(group: Group) {
+    openDialog() {
         const dialogRef = this.dialog.open(GroupFromComponent, {
-        data: group
+            data: new Group('', '', '')
         });
         dialogRef.afterClosed().subscribe(result => {
-        console.log('The dialog was closed');
+        console.log('The dialog was closed ' + result );
         // dialog closed.If submission is ok, call getGroups
         });
     }
+
     onEdit(group: Group) {
         const dialogRef = this.dialog.open(GroupFromComponent, {
         data: group
@@ -41,6 +45,7 @@ export class GroupComponent implements OnInit {
         // dialog closed.If submission is ok, call getGroups
         });
     }
+
     onDelete(group: Group) {
         const dialogRef = this.dialog.open(DeleteGroupComponent, {
         data: group
@@ -49,5 +54,8 @@ export class GroupComponent implements OnInit {
         console.log('The dialog was closed');
         // dialog closed.If submission is ok, call getGroups
         });
+    }
+    onDiscussion() {
+      this.router.navigate(['discussion']);
     }
 }

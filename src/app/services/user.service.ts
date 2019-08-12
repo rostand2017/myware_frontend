@@ -10,7 +10,7 @@ import {tap, catchError} from 'rxjs/internal/operators';
 export class UserService {
       USER: User[] = [
           new User('123K2NQ2', 'Rob', 'Royce', 'rob@gmail.com', '123456', '62232932', 'DG', 'Employé', 'ssds/sdsj.jpg'),
-          new User('123K2NQ2', 'Carlos', 'Royce', 'carlos@gmail.com', '123456', '64232932', 'PDG', 'Admin', 'ssds/sdsj.jpg')
+          new User('123Ks2NQ2', 'Carlos', 'Royce', 'carlos@gmail.com', '123456', '64232932', 'PDG', 'Admin', 'ssds/sdsj.jpg')
       ];
     private heroesUrl = 'api/user';
     httpOptions = {
@@ -22,6 +22,12 @@ export class UserService {
     return true;
   }
   getUsers(): User[] {
+    return this.USER;
+  }
+  getProjectUsers(projectKey: String): User[] {
+    return this.USER;
+  }
+  getIntervenant(taskKey: String): User[] {
     return this.USER;
   }
   add(user: User): Observable<User> {

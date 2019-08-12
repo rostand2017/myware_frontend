@@ -1,7 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
 import {Group} from '../../model/group';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {GroupService} from '../../services/group.service';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
+import {UserFormComponent} from '../../user/user-form/user-form.component';
+import {UserService} from '../../services/user.service';
+import {Constant} from '../../model/constant';
 
 @Component({
   selector: 'app-group-from',
@@ -14,7 +18,10 @@ export class GroupFromComponent implements OnInit {
   group: Group;
   groupForm: FormGroup;
 
-    constructor(private groupService: GroupService, private formBuilder: FormBuilder) { }
+    constructor(public dialogRef: MatDialogRef<UserFormComponent>, @Inject(MAT_DIALOG_DATA) public data: Group,
+                private groupService: GroupService, private formBuilder: FormBuilder) {
+        this.group = data;
+    }
 
   ngOnInit() {
       this.initForm();
@@ -40,5 +47,8 @@ export class GroupFromComponent implements OnInit {
           () => { console.log('Une erreur est survenue'); this.error = 'Une erreur'; }
       );
       console.log(formValue);
+  }
+  onCancel(): void {
+    this.dialogRef.close(Constant.MESSAGE_BAD);
   }
 }

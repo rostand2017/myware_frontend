@@ -1,0 +1,37 @@
+<div class="col-md-12">
+  <button mat-button (click)="onBack()" [disabled]="isDisabled()"><mat-icon>arrow_back</mat-icon></button>
+  <h4 class="m-2">Mes fichiers
+    <button class="float-right" mat-icon-button [matMenuTriggerFor]="menu"><mat-icon>more_vert</mat-icon></button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item (click)="openDialog(folder)">Créer un dossier</button>
+      <button mat-menu-item (click)="fileInput.click()">
+        <span>Ajouter un fichier</span>
+        <input #fileInput type="file" (change)="onFileInput($event)" style="display:none;" />
+      </button>
+    </mat-menu>
+  </h4>
+  <div class="m-2">
+    <div class="card-deck">
+      <div class=" ml-4" *ngFor="let folder of files[0]">
+        <a routerLink="/files/{{folder.key}}"><mat-icon style="font-size: 40px">folder</mat-icon></a>
+        <button class="float-right" mat-icon-button [matMenuTriggerFor]="menu"><mat-icon>more_vert</mat-icon></button>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item (click)="openDialog(folder)">Renommer</button>
+          <button mat-menu-item (click)="onDeleteFile(folder, 'folder')">Supprimer</button>
+          <button mat-menu-item (click)="onShare(folder)">Partager</button>
+        </mat-menu>
+        <p style="font-size: 14px"><a routerLink="/files/{{folder.key}}">{{folder.name}}</a></p>
+      </div>
+      <div class="ml-4" *ngFor="let file of files[1]">
+        <a routerLink="{{file.link}}"><mat-icon style="font-size: 40px" color="primary">image</mat-icon></a>
+        <button class="float-right" mat-icon-button [matMenuTriggerFor]="menu"><mat-icon>more_vert</mat-icon></button>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item (click)="openDialog(file)">Renommer</button>
+          <button mat-menu-item (click)="onDeleteFile(file, 'file')">Supprimer</button>
+          <button mat-menu-item (click)="onShare(file)">Partager</button>
+        </mat-menu>
+        <p style="font-size: 14px">{{file.name}}</p>
+      </div>
+    </div>
+  </div>
+</div>

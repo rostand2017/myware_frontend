@@ -1,3 +1,23 @@
-<p>
-  group works!
-</p>
+<div class="p-2">
+  <div class="row">
+    <div class="col-md-6">
+      <h4>Mes groupes</h4>
+    </div>
+    <div class="col-md-6 text-right">
+      <button (click)="openDialog()" class="text-light text-center" style="background: #673ab7;" mat-icon-button>+</button>
+    </div>
+  </div>
+  <mat-card class="m-2" *ngFor="let group of groups">
+    <mat-card-title>
+      <button mat-button (click)="onDiscussion()">
+        <button class="text-light" mat-icon-button style="background: #673ab7;"><mat-icon>group</mat-icon></button>
+        {{group.name}}
+      </button>
+    </mat-card-title>
+    <mat-card-content class="mb-3">
+        <span>{{group.description}}</span>
+        <button (click)="onEdit(group)" mat-icon-button color="primary" class="text-light bg-dark ml-2 float-right"><mat-icon>edit</mat-icon></button>
+        <button (click)="onDelete(group)" mat-icon-button class="text-light bg-dark float-right clearfix"><mat-icon>delete</mat-icon></button>
+    </mat-card-content>
+  </mat-card>
+</div>
