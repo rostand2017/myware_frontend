@@ -1,4 +1,11 @@
-<div class="p-2"><h4>Utilisateurs</h4> <button (click)="openDialog()" class="justify-content-end" mat-icon-button><mat-icon>add</mat-icon></button></div>
+<div class="m-2">
+  <div class="col-md-6">
+    <h4>Utilisateurs <button (click)="openDialog()" class="text-light text-center" style="background: #673ab7;" mat-icon-button>+</button></h4>
+  </div>
+</div>
+<div class="text-center" *ngIf="error!=''"><mat-error>{{error}}</mat-error></div>
+<div class="text-center" *ngIf="!loadEnd"><span>Patientez un instant ...</span></div>
+<div class="text-center" *ngIf="isEmpty"><span>Aucun utilisateur</span></div>
 <mat-accordion>
   <mat-expansion-panel *ngFor="let user of users" (opened)="panelOpenState = true"
                        (closed)="panelOpenState = false">
@@ -14,8 +21,10 @@
       <button mat-button style="color:#e83246;" (click)="onDelete(user)"><mat-icon>delete</mat-icon> Supprimer l'utilisateur</button>
       <button mat-button color="primary" (click)="onEdit(user)" ><mat-icon>edit</mat-icon> Modifier ses infos</button>
     </div>
-    <p><mat-panel-description><mat-icon>phone</mat-icon>{{user.tel}}</mat-panel-description></p>
-    <mat-panel-description><mat-icon>email</mat-icon>{{user.email}}</mat-panel-description>
+    <p><mat-panel-description>
+      <span class="ml-2"><mat-icon>phone</mat-icon>{{user.tel}}</span>
+      <span class="ml-2"><mat-icon>email</mat-icon>{{user.email}}</span>
+    </mat-panel-description></p>
     <p><mat-chip-list> <mat-chip color="primary" selected>{{user.type}}</mat-chip> </mat-chip-list></p>
   </mat-expansion-panel>
 </mat-accordion>

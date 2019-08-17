@@ -3,6 +3,7 @@
     <div>
       <form [formGroup]="userForm" (ngSubmit)="onSubmitForm()" style="margin: 20px">
         <h3>Mes infos</h3>
+        <span *ngIf="success!=''" class="text-primary">{{success}}</span>
         <mat-error *ngIf="error!=''">{{error}}</mat-error>
         <div class="form-group">
           <mat-form-field class="btn-block" >
@@ -21,10 +22,6 @@
         <div class="form-group">
           <mat-form-field class="btn-block" >
             <input type="password" formControlName="password" matInput placeholder="mot de passe" #password>
-            <mat-error *ngIf="submitted && userForm.controls.password.errors">
-              <mat-error *ngIf="userForm.controls.password.errors.minlength">Le mot de passe doit commprendre au moins <strong>6 caractères</strong></mat-error>
-              <mat-error *ngIf="userForm.controls.password.errors.required">Le mot de passe est <strong>requis</strong></mat-error>
-            </mat-error>
           </mat-form-field>
         </div>
 

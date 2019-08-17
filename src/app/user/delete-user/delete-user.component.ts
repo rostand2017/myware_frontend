@@ -20,8 +20,15 @@ export class DeleteUserComponent implements OnInit {
       this.dialogRef.close(Constant.MESSAGE_BAD);
   }
   onDeleteUser(): void {
-    this.userService.delete(this.data).subscribe(
-        (user) => {this.dialogRef.close(Constant.MESSAGE_OK); console.log('utilisateur supprimé'); },
+    this.userService.delete(this.data.keyy).subscribe(
+        (data) => {
+            if (data.status === 0 ) {
+                this.dialogRef.close( {key: this.data.keyy, status: Constant.MESSAGE_OK});
+                console.log('utilisateur supprimé');
+            } else {
+                this.dialogRef.close({status: Constant.MESSAGE_OK});
+            }
+          },
         (error) => { this.dialogRef.close(Constant.MESSAGE_OK); console.log('une erreur est survenue'); } );
   }
 

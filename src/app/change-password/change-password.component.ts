@@ -13,6 +13,7 @@ export class ChangePasswordComponent implements OnInit {
   userForm: FormGroup;
   submitted = false;
   error = '';
+  success = '';
   constructor(private formBuilder: FormBuilder, private userService: UserService) { }
 
   ngOnInit() {
@@ -29,11 +30,19 @@ export class ChangePasswordComponent implements OnInit {
   onSubmitForm() {
       this.submitted = true;
       this.error = '';
+      this.success = '';
       if (this.userForm.invalid) {
           return;
       }
       const formValue = this.userForm.value;
-      this.userService.changePassword(formValue.newPassword).subscribe( (data: any) => {} ,
+      this.userService.changePassword(formValue.password, formValue.newPassword).subscribe( (data: any) => {
+          if (data.status === 0) {
+              this.success = data.mes;
+          } else {
+              console.log('APPEAR');
+              this.error = data.mes;
+          }
+          } ,
           () => { console.log('Une erreur est survenue'); this.error = 'Une erreur est survenue'; }
       );
       console.log(formValue);

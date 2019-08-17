@@ -14,6 +14,7 @@ export class UserFormComponent implements OnInit {
   userForm: FormGroup;
   submitted = false;
   error = '';
+  success = '';
   constructor(public dialogRef: MatDialogRef<UserFormComponent>, private userService: UserService,
               @Inject(MAT_DIALOG_DATA) public data: User, private formBuilder: FormBuilder) {
     this.user = data;
@@ -29,7 +30,7 @@ export class UserFormComponent implements OnInit {
             type: [this.user.type, Validators.required],
             tel: [this.user.tel, [Validators.required, Validators.pattern('[0-9]{8,12}')]],
             email: [this.user.email, [Validators.required, Validators.email]],
-            password: [this.user.password, [Validators.required, Validators.minLength(6)]],
+            password: [''],
             subname: [this.user.subname],
         }
     );
@@ -37,14 +38,35 @@ export class UserFormComponent implements OnInit {
   onSubmitForm() {
       this.submitted = true;
       this.error = '';
+      this.success = '';
       if (this.userForm.invalid) {
          return;
       }
       const formValue: User = this.userForm.value;
       formValue.keyy = this.user.keyy;
-      this.userService.add(formValue).subscribe( (user: User) => {} /* this.user = user*/,
-          () => { console.log('Une erreur est survenue'); this.error = 'Une erreur'; }
-      );
+      if (this.user.keyy) {
+          this.userService.modify(formValue).subscribe( (data: any) => {
+                  if (data.status === 0) {
+                      this.success = data.mes;
+                      this.user = data.user;
+                  } else {
+                      this.error = data.mes;
+                  }
+              },
+              () => { console.log('Une erreur est survenue'); this.error = 'Une erreur est survenue'; }
+          );
+      } else {
+          this.userService.add(formValue).subscribe( (data: any) => {
+                  if (data.status === 0) {
+                      this.success = data.mes;
+                      this.user = data.user;
+                  } else {
+                      this.error = data.mes;
+                  }
+              },
+              () => { console.log('Une erreur est survenue'); this.error = 'Une erreur est survenue'; }
+          );
+      }
       console.log(formValue);
   }
 

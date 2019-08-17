@@ -14,15 +14,19 @@ export class ProfilComponent implements OnInit {
   userForm: FormGroup;
   submitted = false;
   error = '';
+  success = '';
 
   constructor(private userService: UserService, private formBuilder: FormBuilder) { }
 
   ngOnInit() {
-      this.getUser();
       this.initForm();
+      this.getUser();
   }
   getUser () {
-    this.userService.getCurrentUser().subscribe( user => this.user = user,
+    this.userService.getCurrentUser().subscribe( user => {
+            this.user = user;
+            this.initForm();
+        },
         (error) => { console.log('Une erreur est survenue'); } );
   }
   initForm() {
@@ -33,7 +37,7 @@ export class ProfilComponent implements OnInit {
               type: [this.user.type, Validators.required],
               tel: [this.user.tel, [Validators.required, Validators.pattern('[0-9]{8,12}')]],
               email: [this.user.email, [Validators.required, Validators.email]],
-              password: [this.user.password, [Validators.required, Validators.minLength(6)]],
+              password: [''],
               subname: [this.user.subname],
           }
       );
@@ -41,13 +45,22 @@ export class ProfilComponent implements OnInit {
   onSubmitForm() {
       this.submitted = true;
       this.error = '';
+      this.success = '';
       if (this.userForm.invalid) {
           return;
       }
       const formValue: User = this.userForm.value;
       formValue.keyy = this.user.keyy;
-      this.userService.add(formValue).subscribe( (user: User) => {} /* this.user = user*/,
-          () => { console.log('Une erreur est survenue'); this.error = 'Une erreur'; }
+      this.userService.modifyMe(formValue).subscribe( (data) => {
+            if (data.status === 0 ) {
+                this.success = data.mes;
+                this.user = data.user;
+                this.initForm();
+            } else {
+                this.error = data.mes;
+            }
+          },
+          () => { console.log('Une erreur est survenue'); this.error = 'Une erreur est survenue'; }
       );
       console.log(formValue);
   }

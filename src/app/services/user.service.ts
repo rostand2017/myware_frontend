@@ -31,7 +31,10 @@ export class UserService {
       );
     }
     getUsers(): User[] {
-    return this.USER;
+        return this.USER;
+    }
+    getActiveUsers(): Observable<User[]> {
+        return this.http.get<User[]>(Constant.BASE_URL + 'user/active');
     }
     getUsersGroup(): User[] {
     return this.USER;
@@ -48,14 +51,27 @@ export class UserService {
     login(email: String, password: String): Observable<any> {
       return this.http.post<any>(Constant.BASE_URL + 'login', {email: email, password: password}, this.httpOptions);
     }
-    add(user: User): Observable<User> {
-      return this.http.post<User>(this.heroesUrl, user, this.httpOptions).pipe(
-          tap( (_user: User) => this.log(`fetched user id=${_user.keyy}`)),
-          catchError(this.handleError<User>('error'))
+    add(user: User): Observable<any> {
+      return this.http.post<User>(Constant.BASE_URL + 'user/add', user, this.httpOptions).pipe(
+          tap( (data: any) => this.log(`fetched user`)),
+          catchError(this.handleError<any>('error'))
       );
     }
-    changePassword(newPassword: String): Observable<any> {
-      return this.http.post<any>(this.heroesUrl, newPassword, this.httpOptions).pipe(
+    modify(user: User): Observable<any> {
+      return this.http.post<User>(Constant.BASE_URL + 'user/modify', user, this.httpOptions).pipe(
+          tap( (data: any) => this.log(`fetched user`)),
+          catchError(this.handleError<any>('error'))
+      );
+    }
+    modifyMe(user: User): Observable<any> {
+      return this.http.post<User>(Constant.BASE_URL + 'user/me/modify', user, this.httpOptions).pipe(
+          tap( (data: any) => this.log(`fetched user`)),
+          catchError(this.handleError<any>('error'))
+      );
+    }
+    changePassword(password: String, newPassword: String): Observable<any> {
+      return this.http.post<any>(Constant.BASE_URL + 'change_password',
+          {password: password, newPassword: newPassword}, this.httpOptions).pipe(
           tap( ( data: any) => this.log(`fetched password`)),
           catchError(this.handleError<any>('error'))
       );
@@ -70,11 +86,9 @@ export class UserService {
         return this.http.get<User>(Constant.BASE_URL + 'user/me', {withCredentials: true});
         // return new User('25638SJ1', 'Fotso', 'Ross', '', '', '', '', '', '');
     }
-    delete(user: User | number): Observable<User> {
-      const httpOptions = {
-          headers: new HttpHeaders({ 'Content-Type': 'application/json' })
-      };
-      return this.http.delete<User>('', httpOptions).pipe(
+    delete(userKey: String): Observable<any> {
+      return this.http.post<any>(Constant.BASE_URL + 'user/remove', {keyy: userKey},
+          this.httpOptions).pipe(
           tap(_ => this.log(`user deleted`)),
           catchError(this.handleError<any>('error'))
       );

@@ -32,7 +32,7 @@ export class ChatComponent implements OnInit {
   }
   getUsers() {
     this.users = this.userService.getUsersGroup();
-    this.currentUser = this.userService.getCurrentUser();
+    this.userService.getCurrentUser().subscribe(user => this.currentUser = user);
   }
   getMessages() {
     this.messages = this.messageService.getMessages(this.offset, this.offset + 25, this.discussionKey);
