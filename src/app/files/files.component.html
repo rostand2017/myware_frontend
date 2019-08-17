@@ -6,7 +6,7 @@
       <button mat-menu-item (click)="openDialog(folder)">Créer un dossier</button>
       <button mat-menu-item (click)="fileInput.click()">
         <span>Ajouter un fichier</span>
-        <input #fileInput type="file" (change)="onFileInput($event)" style="display:none;" />
+        <input #fileInput type="file" multiple="multiple" (change)="onFileInput($event)" style="display:none;" />
       </button>
     </mat-menu>
   </h4>

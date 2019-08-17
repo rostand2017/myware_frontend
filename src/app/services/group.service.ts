@@ -3,6 +3,7 @@ import {catchError, tap} from 'rxjs/internal/operators';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Group} from '../model/group';
 import {Observable, of} from 'rxjs';
+import {User} from '../model/user';
 
 @Injectable({
   providedIn: 'root'
@@ -28,8 +29,14 @@ export class GroupService {
   }
   add(group: Group): Observable<Group> {
       return this.http.post<Group>(this.groupUrl, group, this.httpOptions).pipe(
-          tap( (_group: Group) => this.log(`fetched group id=${_group.key}`)),
+          tap( (_group: Group) => this.log(`fetched group id=${_group.keyy}`)),
           catchError(this.handleError<Group>('error'))
+      );
+  }
+  addMember(users: any, groupKey: String): Observable<any> {
+      return this.http.post<any>(this.groupUrl, {users: users, groupKey: groupKey}, this.httpOptions).pipe(
+          tap( (_message: any) => this.log(`member added`)),
+          catchError(this.handleError<any>('error'))
       );
   }
   getGroup(): Observable<Group> {
@@ -43,6 +50,15 @@ export class GroupService {
           headers: new HttpHeaders({ 'Content-Type': 'application/json' })
       };
       return this.http.delete<Group>('', httpOptions).pipe(
+          tap(_ => this.log(`group deleted`)),
+          catchError(this.handleError<any>('error'))
+      );
+  }
+  removeMember(userKey: String, groupKey: String): Observable<Group> {
+      const httpOptions = {
+          headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+      };
+      return this.http.delete<any>('', httpOptions).pipe(
           tap(_ => this.log(`group deleted`)),
           catchError(this.handleError<any>('error'))
       );

@@ -76,4 +76,14 @@ export class FilesComponent implements OnInit {
         const id = this.router.snapshot.paramMap.get('folderKey');
         return !id;
     }
+    onFileInput(event) {
+        if (event.target.files && event.target.files.length > 0) {
+            const file = event.target.files;
+            const data: FormData = new FormData();
+            data.append(`data`, file, file.name );
+            // start a progress bar here
+            this.fileService.addFile(data, this.router.snapshot.paramMap.get('folderKey')).
+            subscribe(value => {}, error => console.log('error'), () => console.log('finished'));
+        }
+    }
 }

@@ -50,7 +50,7 @@ export class CreateFolderComponent implements OnInit {
             console.log(this.file);
         } else {
             const formValue: Folder = this.fileForm.value;
-            formValue.key = this.file.key;
+            formValue.keyy = this.file.keyy;
             this.fileService.addFolder(formValue, this.parentKey).subscribe( (folder: Folder) => {} /* this.user = user*/,
                 () => { console.log('Une erreur est survenue'); this.error = 'Une erreur'; }
             );

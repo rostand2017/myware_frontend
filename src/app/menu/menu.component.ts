@@ -29,8 +29,7 @@ export class MenuComponent implements OnInit {
     this.router.navigate(['files']);
   }
   onDisconnect() {
-      this.userService.disconnect().subscribe(value => console.log('user disconnected'),
-          (error) => console.log('une erreur est survenue'));
+      this.userService.disconnect();
   }
 
 }

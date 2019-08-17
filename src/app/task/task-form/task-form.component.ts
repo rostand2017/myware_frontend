@@ -28,7 +28,7 @@ export class TaskFormComponent implements OnInit {
                 private route: ActivatedRoute, private taskService: TaskService,
                 private formBuilder: FormBuilder, private userService: UserService) {
         this.data = _data;
-        this.data.task.users = this.userService.getIntervenant(this.data.task.key);
+        this.data.task.users = this.userService.getIntervenant(this.data.task.keyy);
     }
 
     ngOnInit() {
@@ -49,7 +49,7 @@ export class TaskFormComponent implements OnInit {
         );
         const formArray: FormArray = this.taskForm.get('users') as FormArray;
         this.data.task.users.forEach((user => {
-            formArray.push(new FormControl(user.key));
+            formArray.push(new FormControl(user.keyy));
         }));
     }
     onSubmitForm() {
@@ -59,8 +59,8 @@ export class TaskFormComponent implements OnInit {
             return;
         }
         const formValue: Task = this.taskForm.value;
-        formValue.key = this.data.task.key;
-        this.taskService.add(formValue, this.data.list.key).subscribe( (task: Task) => {} /* this.user = user*/,
+        formValue.keyy = this.data.task.keyy;
+        this.taskService.add(formValue, this.data.list.keyy).subscribe( (task: Task) => {} /* this.user = user*/,
             () => { console.log('Une erreur est survenue'); this.error = 'Une erreur'; }
         );
         console.log(formValue);
@@ -102,7 +102,7 @@ export class TaskFormComponent implements OnInit {
     selected(user: User): boolean {
         this.isSelected = false;
         this.data.task.users.forEach((_user) => {
-            if ( _user.key === user.key ) {
+            if ( _user.keyy === user.keyy ) {
                 this.isSelected = true;
                 return ;
             }

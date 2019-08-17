@@ -41,7 +41,7 @@ export class UserFormComponent implements OnInit {
          return;
       }
       const formValue: User = this.userForm.value;
-      formValue.key = this.user.key;
+      formValue.keyy = this.user.keyy;
       this.userService.add(formValue).subscribe( (user: User) => {} /* this.user = user*/,
           () => { console.log('Une erreur est survenue'); this.error = 'Une erreur'; }
       );

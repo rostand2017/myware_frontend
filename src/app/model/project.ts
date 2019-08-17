@@ -1,12 +1,12 @@
 import {Group} from './group';
 
 export class Project {
-    private _key: String = '';
+    private _keyy: String = '';
     private _name: String = '';
     private _group: Group[] = [];
 
-    constructor(key: String, name: String, group: Group[]) {
-        this._key = key;
+    constructor(keyy: String, name: String, group: Group[]) {
+        this._keyy = keyy;
         this._name = name;
         this._group = group;
     }
@@ -19,12 +19,12 @@ export class Project {
         this._group = value;
     }
 
-    get key(): String {
-        return this._key;
+    get keyy(): String {
+        return this._keyy;
     }
 
-    set key(value: String) {
-        this._key = value;
+    set keyy(value: String) {
+        this._keyy = value;
     }
 
     get name(): String {

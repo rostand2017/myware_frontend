@@ -1,0 +1,7 @@
+<div mat-dialog-content>
+  <p>Êtes vous sûr de vouloir retirer l'utilisateur <b>{{data.user.name}}</b> ?</p>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onNoClick()">NON</button>
+  <button mat-button (click)="onRemoveUser()"  cdkFocusInitial>OUI</button>
+</div>

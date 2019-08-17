@@ -41,7 +41,7 @@ export class ProjectFormComponent implements OnInit {
         );
         const formArray: FormArray = this.projectForm.get('groups') as FormArray;
         this.project.group.forEach((group => {
-            formArray.push(new FormControl(group.key));
+            formArray.push(new FormControl(group.keyy));
         }));
     }
     onSubmitForm() {
@@ -51,7 +51,7 @@ export class ProjectFormComponent implements OnInit {
             return;
         }
         const formValue: Project = this.projectForm.value;
-        formValue.key = this.project.key;
+        formValue.keyy = this.project.keyy;
         this.projectService.add(formValue).subscribe( (project: Project) => {} /* this.user = user*/,
             () => { console.log('Une erreur est survenue'); this.error = 'Une erreur'; }
         );
@@ -80,7 +80,7 @@ export class ProjectFormComponent implements OnInit {
     selected(group: Group): boolean {
        this.isSelected = false;
       this.project.group.forEach((_group: Group) => {
-        if ( _group.key === group.key ) {
+        if ( _group.keyy === group.keyy ) {
           this.isSelected = true;
           return ;
         }

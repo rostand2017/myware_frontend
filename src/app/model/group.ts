@@ -1,20 +1,20 @@
 export class Group {
-    private _key: String = '';
+    private _keyy: String = '';
     private _name: String = '';
     private _description: String = '';
 
-    constructor(key: String, name: String, description: String) {
-        this._key = key;
+    constructor(keyy: String, name: String, description: String) {
+        this._keyy = keyy;
         this._name = name;
         this._description = description;
     }
 
-    get key(): String {
-        return this._key;
+    get keyy(): String {
+        return this._keyy;
     }
 
-    set key(value: String) {
-        this._key = value;
+    set keyy(value: String) {
+        this._keyy = value;
     }
 
     get name(): String {

@@ -20,7 +20,6 @@ export class ToolbarComponent implements OnInit {
     this.router.navigate(['change_password']);
   }
   onDisconnect() {
-    this.userService.disconnect().subscribe(value => console.log('user disconnected'),
-        (error) => console.log('une erreur est survenue'));
+    this.userService.disconnect();
   }
 }

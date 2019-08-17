@@ -20,7 +20,7 @@
 
         <div class="form-group">
           <mat-form-field class="btn-block" >
-            <input type="password" formControlName="password" matInput placeholder="mot de passe" #password value="{{user.password}}">
+            <input type="password" formControlName="password" matInput placeholder="mot de passe" #password>
             <mat-error *ngIf="submitted && userForm.controls.password.errors">
               <mat-error *ngIf="userForm.controls.password.errors.minlength">Le mot de passe doit commprendre au moins <strong>6 caractères</strong></mat-error>
               <mat-error *ngIf="userForm.controls.password.errors.required">Le mot de passe est <strong>requis</strong></mat-error>

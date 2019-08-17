@@ -9,7 +9,7 @@
   </div>
   <mat-card class="m-2" *ngFor="let group of groups">
     <mat-card-title>
-      <button mat-button (click)="onDiscussion()">
+      <button mat-button (click)="onDiscussion(group)">
         <button class="text-light" mat-icon-button style="background: #673ab7;"><mat-icon>group</mat-icon></button>
         {{group.name}}
       </button>

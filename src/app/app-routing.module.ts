@@ -11,6 +11,8 @@ import {GroupComponent} from './group/group.component';
 import {ProjectComponent} from './project/project.component';
 import {TaskComponent} from './task/task.component';
 import {FilesComponent} from './files/files.component';
+import {DiscussionComponent} from './discussion/discussion.component';
+import {ChatComponent} from './chat/chat.component';
 
 const routes: Routes = [
     {path: '', canActivate: [LoginGuardService], component: AuthComponent},
@@ -22,6 +24,8 @@ const routes: Routes = [
     {path: 'project/:project', canActivate: [AuthService], component: TaskComponent},
     {path: 'files', canActivate: [AuthService], component: FilesComponent},
     {path: 'files/:folderKey', canActivate: [AuthService], component: FilesComponent},
+    {path: 'discussion', canActivate: [AuthService], component: DiscussionComponent},
+    {path: 'discussion/:key', canActivate: [AuthService], component: ChatComponent},
 ];
 
 @NgModule({

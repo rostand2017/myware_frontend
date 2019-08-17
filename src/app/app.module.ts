@@ -25,7 +25,7 @@ import { UserComponent } from './user/user.component';
 import { UserFormComponent } from './user/user-form/user-form.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { DeleteUserComponent } from './user/delete-user/delete-user.component';
-import {HttpClientModule} from '@angular/common/http';
+import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import { ProfilComponent } from './profil/profil.component';
 import { ChangePasswordComponent } from './change-password/change-password.component';
 import { GroupComponent } from './group/group.component';
@@ -45,6 +45,11 @@ import { CreateFolderComponent } from './files/create-folder/create-folder.compo
 import { DeleteFileComponent } from './files/delete-file/delete-file.component';
 import {FileService} from './services/file.service';
 import { ShareComponent } from './files/share/share.component';
+import { DiscussionComponent } from './discussion/discussion.component';
+import { ChatComponent } from './chat/chat.component';
+import { AddUserComponent } from './chat/add-user/add-user.component';
+import { RemoveUserComponent } from './chat/remove-user/remove-user.component';
+import {TokenInterceptorService} from './services/token-interceptor.service';
 
 @NgModule({
   declarations: [
@@ -69,7 +74,11 @@ import { ShareComponent } from './files/share/share.component';
     FilesComponent,
     CreateFolderComponent,
     DeleteFileComponent,
-    ShareComponent
+    ShareComponent,
+    DiscussionComponent,
+    ChatComponent,
+    AddUserComponent,
+    RemoveUserComponent
   ],
   entryComponents: [
       UserFormComponent,
@@ -83,6 +92,8 @@ import { ShareComponent } from './files/share/share.component';
       CreateFolderComponent,
       DeleteFileComponent,
       ShareComponent,
+      RemoveUserComponent,
+      AddUserComponent,
   ],
   imports: [
     BrowserModule,
@@ -121,6 +132,11 @@ import { ShareComponent } from './files/share/share.component';
       ProjectService,
       TaskService,
       FileService,
+      {
+          provide: HTTP_INTERCEPTORS,
+          useClass: TokenInterceptorService,
+          multi: true
+      }
   ],
   bootstrap: [AppComponent]
 })

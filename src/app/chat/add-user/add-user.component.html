@@ -1,0 +1,16 @@
+<div class="row">
+  <div class="col-md-12 table-responsive">
+    <form class="example-container" [formGroup]="addUserForm" (ngSubmit)="onSubmitForm()">
+      <h6>Ajoutez de nouveaux membres</h6>
+      <br>
+      <mat-error *ngIf="error!=''">{{error}}</mat-error>
+      <div class="form-group" *ngFor="let user of users; let i=index">
+        <mat-checkbox color="primary" [value]="user.key" (change)="onCheckChange($event)">{{user.subname}} {{user.name}} </mat-checkbox>
+      </div>
+      <div class="text-center">
+        <button mat-button color="primary" type="submit">Ajouter<mat-icon>check</mat-icon></button>
+        <button mat-button class="text-danger" (click)="onCancel()" type="button">Annuler <mat-icon>cancel</mat-icon></button>
+      </div>
+    </form>
+  </div>
+</div>

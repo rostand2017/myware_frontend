@@ -1,8 +1,8 @@
 <mat-drawer-container style="height: 100%;">
     <!-- add opened or closed  -->
-    <mat-drawer mode="side" style="background: rgba(48,136,236,0.93);" opened *ngIf="isAuth()"><app-menu></app-menu></mat-drawer>
+    <mat-drawer mode="side" style="background: rgba(48,136,236,0.93);" opened *ngIf="auth"><app-menu></app-menu></mat-drawer>
     <mat-drawer-content>
-        <app-toolbar *ngIf="isAuth()"></app-toolbar>
+        <app-toolbar *ngIf="auth"></app-toolbar>
         <router-outlet></router-outlet>
     </mat-drawer-content>
 </mat-drawer-container>

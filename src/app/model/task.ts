@@ -2,15 +2,15 @@ import {List} from './list';
 import {User} from './user';
 
 export class Task {
-    private _key: String;
+    private _keyy: String;
     private _description: String;
     private _endDate: String;
     private _isCompleted: String;
     private _list: List;
     private _users: User[] = [];
 
-    constructor(key: String, description: String, endDate: String) {
-        this._key = key;
+    constructor(keyy: String, description: String, endDate: String) {
+        this._keyy = keyy;
         this._description = description;
         this._endDate = endDate;
     }
@@ -31,12 +31,12 @@ export class Task {
         this._list = value;
     }
 
-    get key(): String {
-        return this._key;
+    get keyy(): String {
+        return this._keyy;
     }
 
-    set key(value: String) {
-        this._key = value;
+    set keyy(value: String) {
+        this._keyy = value;
     }
 
     get description(): String {

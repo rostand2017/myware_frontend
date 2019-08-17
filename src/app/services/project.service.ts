@@ -39,7 +39,7 @@ export class ProjectService {
     }
     add(project: Project): Observable<Project> {
         return this.http.post<Project>(this.projectUrl, project, this.httpOptions).pipe(
-            tap( (_project: Project) => this.log(`fetched project id=${_project.key}`)),
+            tap( (_project: Project) => this.log(`fetched project id=${_project.keyy}`)),
             catchError(this.handleError<Project>('error'))
         );
     }

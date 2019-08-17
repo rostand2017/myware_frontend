@@ -1,5 +1,5 @@
 export class User {
-    private _key: String = '';
+    private _keyy: String = '';
     private _name: String = '';
     private _subname: String = '';
     private _email: String = '';
@@ -9,9 +9,9 @@ export class User {
     private _type: String = '';
     private _image: String = '';
 
-    constructor(key: String, name: String, subname: String, email: String, password: String,
+    constructor(keyy: String, name: String, subname: String, email: String, password: String,
                 tel: String, fonction: String, type: String, image: String) {
-        this._key = key;
+        this._keyy = keyy;
         this._name = name;
         this._subname = subname;
         this._email = email;
@@ -30,12 +30,12 @@ export class User {
         this._password = value;
     }
 
-    get key(): String {
-        return this._key;
+    get keyy(): String {
+        return this._keyy;
     }
 
-    set key(value: String) {
-        this._key = value;
+    set keyy(value: String) {
+        this._keyy = value;
     }
 
     get name(): String {

@@ -4,7 +4,6 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {GroupService} from '../../services/group.service';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 import {UserFormComponent} from '../../user/user-form/user-form.component';
-import {UserService} from '../../services/user.service';
 import {Constant} from '../../model/constant';
 
 @Component({
@@ -42,7 +41,7 @@ export class GroupFromComponent implements OnInit {
           return;
       }
       const formValue: Group = this.groupForm.value;
-      formValue.key = this.group.key;
+      formValue.keyy = this.group.keyy;
       this.groupService.add(formValue).subscribe( (group: Group) => {} /* this.user = user*/,
           () => { console.log('Une erreur est survenue'); this.error = 'Une erreur'; }
       );

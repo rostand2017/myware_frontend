@@ -1,18 +1,19 @@
 <div class="row" style="text-align: center;">
-    <mat-card class="col-md-5" style="text-align: center;display: inline-block;margin-top: 30px">
+    <mat-card class="col-md-4 offset-md-4" style="text-align: center;display: inline-block;margin-top: 30px">
         <img mat-card-avatar src="" alt="Authentification">
         <form [formGroup]="userForm" (ngSubmit)="onSubmitForm()">
+            <mat-error>{{error}}</mat-error>
             <div style="text-align: center">
                 <mat-form-field appearance="fill">
                     <mat-label>Entrez votre email</mat-label>
-                    <input matInput placeholder="Email">
+                    <input formControlName="email" matInput placeholder="Email">
                     <mat-icon matSuffix>email</mat-icon>
                 </mat-form-field>
             </div>
             <div style="text-align: center">
                 <mat-form-field appearance="outline">
                     <mat-label>Mot de passe</mat-label>
-                    <input matInput placeholder="Mot de passe" type="password">
+                    <input formControlName="password" matInput placeholder="Mot de passe" type="password">
                     <mat-icon matSuffix>lock</mat-icon>
                 </mat-form-field>
             </div>

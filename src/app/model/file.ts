@@ -1,13 +1,13 @@
 export class File {
-    private _key: String;
+    private _keyy: String;
     private _name: String;
     private _link: String;
     private _extension: String;
     private _size: number;
     private _createdAt: String;
 
-    constructor(key: String, name: String, link: String, extension: String, size: number, createdAt: String) {
-        this._key = key;
+    constructor(keyy: String, name: String, link: String, extension: String, size: number, createdAt: String) {
+        this._keyy = keyy;
         this._name = name;
         this._link = link;
         this._extension = extension;
@@ -15,12 +15,12 @@ export class File {
         this._createdAt = createdAt;
     }
 
-    get key(): String {
-        return this._key;
+    get keyy(): String {
+        return this._keyy;
     }
 
-    set key(value: String) {
-        this._key = value;
+    set keyy(value: String) {
+        this._keyy = value;
     }
 
     get name(): String {

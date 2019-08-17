@@ -36,26 +36,26 @@ export class FileService {
         );*/
     }
     shareFile(data: any, fileKey: String): Observable<any> {
-        return this.http.post<any>(this.fileUrl, {key: fileKey, data: data}, this.httpOptions).pipe(
+        return this.http.post<any>(this.fileUrl, {keyy: fileKey, data: data}, this.httpOptions).pipe(
             tap( (_data: any) => this.log(`shared file`)),
             catchError(this.handleError<any>('error'))
         );
     }
     shareFolder(data: any, folderKey: String): Observable<any> {
-        return this.http.post<any>(this.fileUrl, {key: folderKey, data: data}, this.httpOptions).pipe(
+        return this.http.post<any>(this.fileUrl, {keyy: folderKey, data: data}, this.httpOptions).pipe(
             tap( (_data: any) => this.log(`shared folder`)),
             catchError(this.handleError<any>('error'))
         );
     }
-    addFile(file: File, folderKey: String): Observable<File> {
-        return this.http.post<File>(this.fileUrl, {file: file, projectKey: folderKey}, this.httpOptions).pipe(
-            tap( (_file: File) => this.log(`fetched file id=${_file.key}`)),
+    addFile(file: any, folderKey: String): Observable<File> {
+        return this.http.post<any>(this.fileUrl, {files: file, folderKey: folderKey}, this.httpOptions).pipe(
+            tap( (_file: File) => this.log(`fetched file id=${_file.keyy}`)),
             catchError(this.handleError<File>('error'))
         );
     }
     addFolder(folder: Folder, folderKey: String): Observable<Folder> {
         return this.http.post<Folder>(this.fileUrl, {folder: folder, folderKey: folderKey}, this.httpOptions).pipe(
-            tap( (_folder: Folder) => this.log(`fetched file id=${_folder.key}`)),
+            tap( (_folder: Folder) => this.log(`fetched file id=${_folder.keyy}`)),
             catchError(this.handleError<Folder>('error'))
         );
     }

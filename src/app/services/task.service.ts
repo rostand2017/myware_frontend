@@ -47,13 +47,13 @@ export class TaskService {
     }
     addList(list: List, projectKey: String): Observable<List> {
         return this.http.post<List>(this.taskUrl, {list: list, projectKey: projectKey}, this.httpOptions).pipe(
-            tap( (_list: List) => this.log(`fetched task id=${_list.key}`)),
+            tap( (_list: List) => this.log(`fetched task id=${_list.keyy}`)),
             catchError(this.handleError<List>('error'))
         );
     }
     add(task: Task, listKey: String): Observable<Task> {
         return this.http.post<Task>(this.taskUrl, {task: task, list: List}, this.httpOptions).pipe(
-            tap( (_task: Task) => this.log(`fetched task id=${_task.key}`)),
+            tap( (_task: Task) => this.log(`fetched task id=${_task.keyy}`)),
             catchError(this.handleError<Task>('error'))
         );
     }

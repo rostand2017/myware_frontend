@@ -1,4 +1,4 @@
-<div class="display-4 p-2">Utilisateurs <button (click)="openDialog()" class="justify-content-end" mat-icon-button><mat-icon>add</mat-icon></button></div>
+<div class="p-2"><h4>Utilisateurs</h4> <button (click)="openDialog()" class="justify-content-end" mat-icon-button><mat-icon>add</mat-icon></button></div>
 <mat-accordion>
   <mat-expansion-panel *ngFor="let user of users" (opened)="panelOpenState = true"
                        (closed)="panelOpenState = false">

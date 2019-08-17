@@ -5,6 +5,7 @@ import {MatDialog} from '@angular/material';
 import {GroupFromComponent} from './group-from/group-from.component';
 import {DeleteGroupComponent} from './delete-group/delete-group.component';
 import {Router} from '@angular/router';
+import {User} from '../model/user';
 
 @Component({
   selector: 'app-group',
@@ -55,7 +56,7 @@ export class GroupComponent implements OnInit {
         // dialog closed.If submission is ok, call getGroups
         });
     }
-    onDiscussion() {
-      this.router.navigate(['discussion']);
+    onDiscussion(group: Group) {
+      this.router.navigate(['discussion/' + group.keyy]);
     }
 }

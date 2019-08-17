@@ -1,26 +1,26 @@
 import {File} from './file';
 
 export class Folder {
-    private _key: String = '';
+    private _keyy: String = '';
     private _name: String = '';
     private _folders: Folder[] = [];
     private _files: File[] = [];
     private _createdAt: String;
 
-    constructor(key: String, name: String, folders: Folder[], files: File[], createdAt: String) {
-        this._key = key;
+    constructor(keyy: String, name: String, folders: Folder[], files: File[], createdAt: String) {
+        this._keyy = keyy;
         this._name = name;
         this._folders = folders;
         this._files = files;
         this._createdAt = createdAt;
     }
 
-    get key(): String {
-        return this._key;
+    get keyy(): String {
+        return this._keyy;
     }
 
-    set key(value: String) {
-        this._key = value;
+    set keyy(value: String) {
+        this._keyy = value;
     }
 
     get name(): String {
