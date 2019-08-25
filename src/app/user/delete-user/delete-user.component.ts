@@ -17,19 +17,19 @@ export class DeleteUserComponent implements OnInit {
       @Inject(MAT_DIALOG_DATA) public data: User) {}
 
   onNoClick(): void {
-      this.dialogRef.close(Constant.MESSAGE_BAD);
+      this.dialogRef.close({status: Constant.OPERATION_CANCELLED});
   }
   onDeleteUser(): void {
     this.userService.delete(this.data.keyy).subscribe(
         (data) => {
             if (data.status === 0 ) {
-                this.dialogRef.close( {key: this.data.keyy, status: Constant.MESSAGE_OK});
-                console.log('utilisateur supprimé');
+                this.dialogRef.close( {key: this.data.keyy, status: Constant.DELETE_SUCCESS, mes: data.mes});
             } else {
-                this.dialogRef.close({status: Constant.MESSAGE_OK});
+                this.dialogRef.close({status: Constant.DELETE_FAILED, mes: data.mes});
             }
           },
-        (error) => { this.dialogRef.close(Constant.MESSAGE_OK); console.log('une erreur est survenue'); } );
+        (error) => { this.dialogRef.close({status: Constant.DELETE_FAILED, mes: 'Une erreur est survenue'});
+        } );
   }
 
   ngOnInit() {

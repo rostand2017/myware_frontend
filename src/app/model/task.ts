@@ -5,14 +5,15 @@ export class Task {
     private _keyy: String;
     private _description: String;
     private _endDate: String;
-    private _isCompleted: String;
+    private _isCompleted: boolean;
     private _list: List;
     private _users: User[] = [];
 
-    constructor(keyy: String, description: String, endDate: String) {
+    constructor(keyy: String, description: String, endDate: String, isCompleted: boolean) {
         this._keyy = keyy;
         this._description = description;
         this._endDate = endDate;
+        this._isCompleted = isCompleted;
     }
 
     get users(): User[] {
@@ -55,11 +56,11 @@ export class Task {
         this._endDate = value;
     }
 
-    get isCompleted(): String {
+    get isCompleted(): boolean {
         return this._isCompleted;
     }
 
-    set isCompleted(value: String) {
+    set isCompleted(value: boolean) {
         this._isCompleted = value;
     }
 }

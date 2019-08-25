@@ -50,6 +50,7 @@ import { ChatComponent } from './chat/chat.component';
 import { AddUserComponent } from './chat/add-user/add-user.component';
 import { RemoveUserComponent } from './chat/remove-user/remove-user.component';
 import {TokenInterceptorService} from './services/token-interceptor.service';
+import { DeleteGroupProjectComponent } from './project/delete-group-project/delete-group-project.component';
 
 @NgModule({
   declarations: [
@@ -78,7 +79,8 @@ import {TokenInterceptorService} from './services/token-interceptor.service';
     DiscussionComponent,
     ChatComponent,
     AddUserComponent,
-    RemoveUserComponent
+    RemoveUserComponent,
+    DeleteGroupProjectComponent
   ],
   entryComponents: [
       UserFormComponent,
@@ -94,6 +96,7 @@ import {TokenInterceptorService} from './services/token-interceptor.service';
       ShareComponent,
       RemoveUserComponent,
       AddUserComponent,
+      DeleteGroupProjectComponent,
   ],
   imports: [
     BrowserModule,
@@ -123,6 +126,8 @@ import {TokenInterceptorService} from './services/token-interceptor.service';
     MatGridListModule,
     MatDatepickerModule,
     MatNativeDateModule,
+    MatProgressBarModule,
+    MatSnackBarModule,
     ReactiveFormsModule,
     FormsModule,
   ],

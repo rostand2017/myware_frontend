@@ -20,6 +20,8 @@ export class ShareComponent implements OnInit {
     users: User[] = [];
     groups: Group[] = [];
     fileForm: FormGroup;
+    isEmpty = false;
+    loadEnd = false;
 
     constructor(public dialog: MatDialog, public dialogRef: MatDialogRef<ShareComponent>, @Inject(MAT_DIALOG_DATA) public _data: any,
                 private fileService: FileService, private groupService: GroupService, private formBuilder: FormBuilder,
@@ -33,10 +35,22 @@ export class ShareComponent implements OnInit {
         this.initForm();
     }
     getUsers() {
-        this.users = this.userService.getUsers();
+        // this.users = this.userService.getUsers();
     }
     getGroups() {
-        this.groups = this.groupService.getGroups();
+        this.groupService.getGroups().subscribe(
+            (groups) => {
+                if (groups.length === 0) {
+                    this.isEmpty = true;
+                }
+                this.loadEnd = true;
+                this.groups = groups;
+            },
+            error => {
+                this.error = 'Une erreur est survenue';
+                this.loadEnd = true;
+            }
+        );
     }
     initForm() {
         this.fileForm = this.formBuilder.group(

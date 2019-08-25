@@ -1,20 +1,26 @@
 <div class="p-2">
-  <div class="row">
-    <div class="col-md-6">
-      <h4>Mes groupes</h4>
-    </div>
-    <div class="col-md-6 text-right">
-      <button (click)="openDialog()" class="text-light text-center" style="background: #673ab7;" mat-icon-button>+</button>
+  <div class="m-4">
+    <div class="col-md-12">
+      <h4>
+        Mes groupes
+        <button (click)="openDialog()" class="text-light text-center float-right clearfix" style="background: #673ab7;" mat-icon-button>+</button>
+      </h4>
     </div>
   </div>
+  <mat-progress-bar mode="indeterminate" *ngIf="!loadEnd"></mat-progress-bar>
+  <div class="text-center" *ngIf="!loadEnd"><span>Patientez un instant ...</span></div>
+  <div class="text-center" *ngIf="error!=''"><mat-error>{{error}}</mat-error></div>
+  <hr *ngIf="isEmpty">
+  <div class="text-center" *ngIf="isEmpty"><span>Vous n'appartenez à aucun groupe</span></div>
   <mat-card class="m-2" *ngFor="let group of groups">
     <mat-card-title>
       <button mat-button (click)="onDiscussion(group)">
         <button class="text-light" mat-icon-button style="background: #673ab7;"><mat-icon>group</mat-icon></button>
         {{group.name}}
       </button>
+      <button mat-icon-button class="float-right clearfix bg-info text-light">2</button>
     </mat-card-title>
-    <mat-card-content class="mb-3">
+    <mat-card-content class="mb-3 ml-2">
         <span>{{group.description}}</span>
         <button (click)="onEdit(group)" mat-icon-button color="primary" class="text-light bg-dark ml-2 float-right"><mat-icon>edit</mat-icon></button>
         <button (click)="onDelete(group)" mat-icon-button class="text-light bg-dark float-right clearfix"><mat-icon>delete</mat-icon></button>

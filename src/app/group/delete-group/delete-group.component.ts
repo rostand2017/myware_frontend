@@ -18,12 +18,18 @@ export class DeleteGroupComponent implements OnInit {
       @Inject(MAT_DIALOG_DATA) public data: Group) {}
 
   onNoClick(): void {
-      this.dialogRef.close(Constant.MESSAGE_BAD);
+      this.dialogRef.close({status: Constant.OPERATION_CANCELLED});
   }
   onDeleteGroup(): void {
-      this.groupService.delete(this.data).subscribe(
-          (group) => {this.dialogRef.close(Constant.MESSAGE_OK); console.log('Groupe supprimé'); },
-          (error) => { this.dialogRef.close(Constant.MESSAGE_OK); console.log('Une erreur est survenue'); } );
+      this.groupService.delete(this.data.keyy).subscribe(
+          (data) => {
+              if (data.status === 0 ) {
+                  this.dialogRef.close( {key: this.data.keyy, status: Constant.DELETE_SUCCESS, mes: data.mes});
+              } else {
+                  this.dialogRef.close({status: Constant.DELETE_FAILED, mes: data.mes});
+              }
+          },
+          (error) => { this.dialogRef.close(Constant.MESSAGE_OK);} );
   }
 
   ngOnInit() {

@@ -6,6 +6,7 @@ import {ProjectService} from '../../services/project.service';
 import {UserFormComponent} from '../../user/user-form/user-form.component';
 import {Group} from '../../model/group';
 import {GroupService} from '../../services/group.service';
+import {Constant} from '../../model/constant';
 
 @Component({
   selector: 'app-project-from',
@@ -16,21 +17,52 @@ export class ProjectFormComponent implements OnInit {
     submitted = false;
     error = '';
     project: Project;
-    groups: Group[];
+    groups: Group[] = [];
     projectForm: FormGroup;
     isSelected = false;
+    isEmpty = false;
+    loadEnd = false;
+    submitting = false;
 
     constructor(public dialogRef: MatDialogRef<UserFormComponent>, @Inject(MAT_DIALOG_DATA) public data: Project,
                 private projectService: ProjectService, private formBuilder: FormBuilder, private groupService: GroupService) {
         this.project = data;
+        this.initForm();
     }
 
     ngOnInit() {
         this.getGroups();
-        this.initForm();
     }
     getGroups() {
-        this.groups = this.groupService.getGroups();
+        if (this.project.keyy === '') {
+            this.groupService.getGroups().subscribe(
+                (groups) => {
+                    if (groups.length === 0) {
+                        this.isEmpty = true;
+                    }
+                    this.groups = groups;
+                },
+                error => {
+                    this.error = 'Une erreur est survenue';
+                    this.loadEnd = true;
+                },
+                () => this.loadEnd = true
+            );
+        } else {
+            this.groupService.otherGroupProject(this.project.keyy).subscribe(
+                (groups) => {
+                    if (groups.length === 0) {
+                        this.isEmpty = true;
+                    }
+                    this.groups = groups;
+                },
+                error => {
+                    this.error = 'Une erreur est survenue';
+                    this.loadEnd = true;
+                },
+                () => this.loadEnd = true
+            );
+        }
     }
     initForm() {
         this.projectForm = this.formBuilder.group(
@@ -39,10 +71,6 @@ export class ProjectFormComponent implements OnInit {
                 groups: new FormArray([])
             }
         );
-        const formArray: FormArray = this.projectForm.get('groups') as FormArray;
-        this.project.group.forEach((group => {
-            formArray.push(new FormControl(group.keyy));
-        }));
     }
     onSubmitForm() {
         this.submitted = true;
@@ -50,15 +78,24 @@ export class ProjectFormComponent implements OnInit {
         if (this.projectForm.invalid) {
             return;
         }
+        this.submitting = true;
         const formValue: Project = this.projectForm.value;
         formValue.keyy = this.project.keyy;
-        this.projectService.add(formValue).subscribe( (project: Project) => {} /* this.user = user*/,
-            () => { console.log('Une erreur est survenue'); this.error = 'Une erreur'; }
+        this.projectService.add(formValue).subscribe( (data) => {
+                if (data.status === 0) {
+                    this.project = data.project;
+                    this.dialogRef.close({status: Constant.MODIFY_SUCCESS, project: data.project, mes: data.mes});
+                } else {
+                    this.error = data.mes;
+                }
+            },
+            () => {this.error = 'Une erreur est survenue'; },
+            () => this.submitting = false
         );
         console.log(formValue);
     }
     onCancel(): void {
-        this.dialogRef.close();
+        this.dialogRef.close({status: Constant.OPERATION_CANCELLED});
     }
     onCheckChange(event) {
         const formArray: FormArray = this.projectForm.get('groups') as FormArray;
@@ -75,16 +112,5 @@ export class ProjectFormComponent implements OnInit {
                 i++;
             });
         }
-    }
-
-    selected(group: Group): boolean {
-       this.isSelected = false;
-      this.project.group.forEach((_group: Group) => {
-        if ( _group.keyy === group.keyy ) {
-          this.isSelected = true;
-          return ;
-        }
-      });
-      return this.isSelected;
     }
 }

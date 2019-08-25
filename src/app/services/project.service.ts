@@ -4,6 +4,7 @@ import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Observable, of} from 'rxjs';
 import {Project} from '../model/project';
 import {Group} from '../model/group';
+import {Constant} from '../model/constant';
 
 @Injectable({
   providedIn: 'root'
@@ -30,33 +31,21 @@ export class ProjectService {
     };
     constructor(private http: HttpClient) { }
 
-    getProjects(): Project[] {
-        return this.PROJECT;
-        /*return this.http.get<Project[]>(this.projectUrl).pipe(
-            tap( (project: Project[])_ => this.log(`fetched project`)),
-            catchError(this.handleError<any>('error'))
-        );*/
+    getProjects(): Observable<Project[]> {
+        return this.http.get<Project[]>(Constant.BASE_URL + 'project/all');
     }
-    add(project: Project): Observable<Project> {
-        return this.http.post<Project>(this.projectUrl, project, this.httpOptions).pipe(
+    add(project: Project): Observable<any> {
+        return this.http.post<any>(Constant.BASE_URL + 'project/edit', project, this.httpOptions).pipe(
             tap( (_project: Project) => this.log(`fetched project id=${_project.keyy}`)),
             catchError(this.handleError<Project>('error'))
         );
     }
-    getProject(): Observable<Project> {
-        return this.http.get<Project>(this.projectUrl).pipe(
-            tap(_ => this.log(`fetched hero id`)),
-            catchError(this.handleError<any>('error'))
-        );
+    deleteProject(project: Project): Observable<any> {
+        return this.http.post<any>(Constant.BASE_URL + 'project/remove', {keyy: project.keyy}, this.httpOptions);
     }
-    delete(project: Project | number): Observable<Project> {
-        const httpOptions = {
-            headers: new HttpHeaders({ 'Content-Type': 'application/json' })
-        };
-        return this.http.delete<Project>('', httpOptions).pipe(
-            tap(_ => this.log(`project deleted`)),
-            catchError(this.handleError<any>('error'))
-        );
+    deleteGroupProject(projectKey: String, groupKey: String): Observable<any> {
+        return this.http.post<any>(Constant.BASE_URL + 'project/removegroup',
+            {projectKey: projectKey, groupKey: groupKey}, this.httpOptions);
     }
 
     private handleError<T> (operation = 'operation', result?: T) {

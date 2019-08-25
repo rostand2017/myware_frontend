@@ -3,6 +3,7 @@ import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 import {User} from '../../model/user';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {UserService} from '../../services/user.service';
+import {Constant} from '../../model/constant';
 
 @Component({
   selector: 'app-user-form',
@@ -13,6 +14,7 @@ export class UserFormComponent implements OnInit {
   @Input() user: User;
   userForm: FormGroup;
   submitted = false;
+  submitting = false;
   error = '';
   success = '';
   constructor(public dialogRef: MatDialogRef<UserFormComponent>, private userService: UserService,
@@ -42,6 +44,7 @@ export class UserFormComponent implements OnInit {
       if (this.userForm.invalid) {
          return;
       }
+      this.submitting = true;
       const formValue: User = this.userForm.value;
       formValue.keyy = this.user.keyy;
       if (this.user.keyy) {
@@ -49,29 +52,33 @@ export class UserFormComponent implements OnInit {
                   if (data.status === 0) {
                       this.success = data.mes;
                       this.user = data.user;
+                      this.dialogRef.close({status: Constant.MODIFY_SUCCESS, user: data.user, mes: data.mes});
                   } else {
                       this.error = data.mes;
                   }
               },
-              () => { console.log('Une erreur est survenue'); this.error = 'Une erreur est survenue'; }
+              () => { this.error = 'Une erreur est survenue'; },
+              () => this.submitting = false
           );
       } else {
           this.userService.add(formValue).subscribe( (data: any) => {
                   if (data.status === 0) {
                       this.success = data.mes;
                       this.user = data.user;
+                      this.dialogRef.close({status: Constant.ADD_SUCCESS, user: data.user, mes: data.mes});
                   } else {
                       this.error = data.mes;
                   }
               },
-              () => { console.log('Une erreur est survenue'); this.error = 'Une erreur est survenue'; }
+              () => { this.error = 'Une erreur est survenue'; },
+              () => this.submitting = false
           );
       }
       console.log(formValue);
   }
 
   onCancel(): void {
-      this.dialogRef.close();
+      this.dialogRef.close({status: Constant.OPERATION_CANCELLED});
   }
 
 }

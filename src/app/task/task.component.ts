@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {List} from '../model/list';
-import {MatDialog} from '@angular/material';
+import {MatDialog, MatSnackBar} from '@angular/material';
 import {ActivatedRoute, Router} from '@angular/router';
 import {TaskService} from '../services/task.service';
 import {DeleteTaskComponent} from './delete-task/delete-task.component';
@@ -16,22 +16,35 @@ import {Location} from '@angular/common';
   styleUrls: ['./task.component.css']
 })
 export class TaskComponent implements OnInit {
-    lists: List[];
+    lists: List[] = [];
     list: List;
     selectedList: List;
     listForm: FormGroup;
     submittedList = false;
     name: String;
+    error = '';
+    loadEnd = false;
+    submitting = false;
 
     constructor(public dialog: MatDialog, private taskService: TaskService, private location: Location,
-                private router: Router, private route: ActivatedRoute, private formBuilder: FormBuilder) { }
+                private router: Router, private route: ActivatedRoute, private formBuilder: FormBuilder,
+                private snackBar: MatSnackBar) { }
 
     ngOnInit() {
         this.getLists();
         this.initForm();
     }
     getLists() {
-        this.lists = this.taskService.getLists(this.route.snapshot.paramMap.get('project'));
+        this.taskService.getLists(this.route.snapshot.paramMap.get('project')).subscribe(
+            (lists) => {
+                this.loadEnd = true;
+                this.lists = lists;
+            },
+            error => {
+                this.error = 'Une erreur est survenue';
+                this.loadEnd = true;
+            }
+        );
     }
 
     initForm() {
@@ -42,33 +55,113 @@ export class TaskComponent implements OnInit {
 
     openDialog(list: List) {
         const dialogRef = this.dialog.open(TaskFormComponent, {
-            data: { task: new Task('', '', ''), list: list}
+            data: { task: new Task('', '', '', false), list: list,
+            projectKey: this.route.snapshot.paramMap.get('project')
+            }
         });
         dialogRef.afterClosed().subscribe(result => {
-            console.log('The dialog was closed ' + result );
-            // dialog closed.If submission is ok, call getLists
+            switch (result.status) {
+                case Constant.MODIFY_SUCCESS:
+                    this.snackBar.open(result.mes, 'ok', {
+                        duration: 2000,
+                    });
+                    this.list.task = this.list.task.filter(
+                        value => {
+                            if (value.keyy === result.task.keyy ) {
+                                return result;
+                            }
+                            return value;
+                        }
+                    );
+                    break;
+                case Constant.ADD_SUCCESS:
+                    this.snackBar.open(result.mes, 'ok', {
+                        duration: 2000,
+                    });
+                    this.list.task.push(result.task);
+                    break;
+                case Constant.DELETE_SUCCESS:
+                    this.snackBar.open(result.mes, 'ok', {
+                        duration: 2000,
+                    });
+                    list.task = this.list.task.filter(
+                        value => {
+                            if (value.keyy !== result.key) {
+                                return value;
+                            }
+                        }
+                    );
+                    break;
+            }
         });
     }
 
     onEditTask(task: Task, list: List) {
         const dialogRef = this.dialog.open(TaskFormComponent, {
-            data: { task: task, list: list}
+            data: { task: task, list: list, projectKey: this.route.snapshot.paramMap.get('project')}
         });
         dialogRef.afterClosed().subscribe(result => {
-            console.log('The dialog was closed ' + result );
-            // dialog closed.If submission is ok, call getLists
+            switch (result.status) {
+                case Constant.MODIFY_SUCCESS:
+                    this.snackBar.open(result.mes, 'ok', {
+                        duration: 2000,
+                    });
+                    this.list.task = this.list.task.filter(
+                        value => {
+                            if (value.keyy === result.task.keyy ) {
+                                return result;
+                            }
+                            return value;
+                        }
+                    );
+                    break;
+                case Constant.ADD_SUCCESS:
+                    this.snackBar.open(result.mes, 'ok', {
+                        duration: 2000,
+                    });
+                    this.list.task.push(result.task);
+                    break;
+                case Constant.DELETE_SUCCESS:
+                    this.snackBar.open(result.mes, 'ok', {
+                        duration: 2000,
+                    });
+                    list.task = this.list.task.filter(
+                        value => {
+                            if (value.keyy !== result.key) {
+                                return value;
+                            }
+                        }
+                    );
+                    break;
+            }
         });
     }
 
-    onSubmitList() {
+    onSubmitList(inputList: HTMLInputElement) {
         this.submittedList = true;
+        this.error = '';
         if (this.listForm.invalid) {
             return;
         }
-        const formValue: List = this.listForm.value as List;
+        this.submitting = true;
+        const formValue: List = this.listForm.value;
+        formValue.keyy = '';
         this.taskService.addList(formValue, this.route.snapshot.paramMap.get('project')).subscribe(
-            _list => { this.lists.push(_list); } /* this.user = user*/,
-            () => { console.log('Une erreur est survenue'); }
+            data => {
+                    if (data.status === 0) {
+                        this.lists.push(data.list);
+                        inputList.value = '';
+                    } else {
+                        this.snackBar.open(data.mes, 'ok', {
+                            duration: 2000,
+                        });
+                    }
+                },
+            () => {
+                this.error = 'Une erreur est survenue';
+                this.submitting = false;
+            },
+            () => this.submitting = false
         );
         console.log(formValue);
     }
@@ -77,34 +170,47 @@ export class TaskComponent implements OnInit {
         if (!list.name.trim()) {
             return;
         }
-        alert(list.name);
         this.taskService.addList(list, this.route.snapshot.paramMap.get('project')).subscribe(
-            _list => { console.log('goood'); } /* this.user = user*/,
-            () => { console.log('Une erreur est survenue'); }
+            data => {
+                if (data.status === 0 ) {
+                    list.name = data.list.name;
+                }
+                this.snackBar.open(data.mes, 'ok', {
+                    duration: 2000,
+                });
+            },
+            () => {
+                this.snackBar.open('Une erreur est survenue', 'ok', {
+                    duration: 3000,
+                });
+            }
         );
-        console.log(list);
     }
 
     onDeleteList(list: List) {
+        console.log('key: ' + list.keyy);
         const dialogRef = this.dialog.open(DeleteTaskComponent, {
             data: { type: 'list', list: list}
         });
         dialogRef.afterClosed().subscribe(result => {
-            if (result === Constant.MESSAGE_OK) {
-                // remove item
+            switch (result.status) {
+                case Constant.DELETE_SUCCESS:
+                    this.snackBar.open(result.mes, 'ok', {
+                        duration: 2000,
+                    });
+                    console.log('key: ' + result.key);
+                    this.lists = this.lists.filter(value => {
+                        if (value.keyy !== result.key) {
+                            return value;
+                        }
+                    });
+                    break;
+                case Constant.DELETE_FAILED:
+                    this.snackBar.open(result.mes, 'ok', {
+                        duration: 2000,
+                    });
+                    break;
             }
-            console.log('The dialog was closed');
-            // dialog closed.If submission is ok, call getLists
-        });
-    }
-
-    onDeleteTask(task: Task) {
-        const dialogRef = this.dialog.open(DeleteTaskComponent, {
-            data: { type: 'task', task: task}
-        });
-        dialogRef.afterClosed().subscribe(result => {
-            console.log('The dialog was closed');
-            // dialog closed.If submission is ok, call getLists
         });
     }
 

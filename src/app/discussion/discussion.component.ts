@@ -13,17 +13,29 @@ import {RemoveUserComponent} from '../chat/remove-user/remove-user.component';
   styleUrls: ['./discussion.component.css']
 })
 export class DiscussionComponent implements OnInit {
-    users: User[];
+    users: User[] = [];
     user: User;
-
+    error = '';
+    isEmpty = false;
+    loadEnd = false;
     constructor(public dialog: MatDialog, private userService: UserService, private router: Router) { }
 
     ngOnInit() {
         this.getUsers();
     }
     getUsers() {
-        this.users = this.userService.getUsers();
-        // alert(this.users[0].name);
+        this.userService.getDiscussionUsers().subscribe(
+            (users) => {
+                if (users.length === 0) {
+                    this.isEmpty = true;
+                }
+                this.loadEnd = true;
+                this.users = users;
+            },
+            error => {
+                this.error = 'Une erreur est survenue';
+            }
+        );
     }
     onDiscussion(user: User) {
         this.router.navigate(['discussion/' + user.keyy]);

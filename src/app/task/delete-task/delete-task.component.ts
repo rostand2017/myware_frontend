@@ -17,18 +17,41 @@ export class DeleteTaskComponent implements OnInit {
         @Inject(MAT_DIALOG_DATA) public data: any) {}
 
     onNoClick(): void {
-        this.dialogRef.close(Constant.MESSAGE_BAD);
+        this.dialogRef.close({status: Constant.OPERATION_CANCELLED});
     }
     onDelete(): void {
         if ( this.data.type === 'list' ) {
             this.taskService.deleteList(this.data.list).subscribe(
-                (group) => {this.dialogRef.close(Constant.MESSAGE_OK); console.log('Groupe supprimé'); },
-                (error) => { this.dialogRef.close(Constant.MESSAGE_OK); console.log('Une erreur est survenue'); }
-                );
-        } else {
+                (data) => {
+                    if (data.status === 0 ) {
+                        this.dialogRef.close( {key: this.data.list.keyy, status: Constant.DELETE_SUCCESS, mes: data.mes});
+                    } else {
+                        this.dialogRef.close({status: Constant.DELETE_FAILED, mes: data.mes});
+                    }
+                },
+                (error) => this.dialogRef.close(Constant.MESSAGE_OK)
+            );
+        } else if (this.data.type === 'task') {
             this.taskService.deleteTask(this.data.task).subscribe(
-                (group) => {this.dialogRef.close(Constant.MESSAGE_OK); console.log('Groupe supprimé'); },
-                (error) => { this.dialogRef.close(Constant.MESSAGE_OK); console.log('Une erreur est survenue'); }
+                (data) => {
+                    if (data.status === 0 ) {
+                        this.dialogRef.close( {key: this.data.task.keyy, status: Constant.DELETE_SUCCESS, mes: data.mes});
+                    } else {
+                        this.dialogRef.close({status: Constant.DELETE_FAILED, mes: data.mes});
+                    }
+                },
+                (error) => this.dialogRef.close(Constant.MESSAGE_OK)
+            );
+        } else {
+            this.taskService.deleteUserTask(this.data.user, this.data.task).subscribe(
+                (data) => {
+                    if (data.status === 0 ) {
+                        this.dialogRef.close( {key: this.data.task.keyy, status: Constant.DELETE_SUCCESS, mes: data.mes});
+                    } else {
+                        this.dialogRef.close({status: Constant.DELETE_FAILED, mes: data.mes});
+                    }
+                },
+                (error) => this.dialogRef.close(Constant.MESSAGE_OK)
             );
         }
     }

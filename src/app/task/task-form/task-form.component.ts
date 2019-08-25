@@ -10,6 +10,8 @@ import {UserService} from '../../services/user.service';
 import {User} from '../../model/user';
 import {ActivatedRoute} from '@angular/router';
 import {DeleteTaskComponent} from '../delete-task/delete-task.component';
+import {Project} from '../../model/project';
+import {DeleteGroupProjectComponent} from '../../project/delete-group-project/delete-group-project.component';
 
 @Component({
   selector: 'app-task-form',
@@ -19,16 +21,18 @@ import {DeleteTaskComponent} from '../delete-task/delete-task.component';
 export class TaskFormComponent implements OnInit {
     submitted = false;
     error = '';
+    success = '';
     data: any;
     users: User[] = [];
     taskForm: FormGroup;
     isSelected = false;
+    isEmpty = false;
+    loadEnd = false;
+    submitting = false;
 
     constructor(public dialog: MatDialog, public dialogRef: MatDialogRef<TaskFormComponent>, @Inject(MAT_DIALOG_DATA) public _data: any,
-                private route: ActivatedRoute, private taskService: TaskService,
-                private formBuilder: FormBuilder, private userService: UserService) {
+                 private taskService: TaskService, private formBuilder: FormBuilder) {
         this.data = _data;
-        this.data.task.users = this.userService.getIntervenant(this.data.task.keyy);
     }
 
     ngOnInit() {
@@ -36,7 +40,36 @@ export class TaskFormComponent implements OnInit {
         this.initForm();
     }
     getUsers() {
-        this.users = this.userService.getProjectUsers(this.route.snapshot.paramMap.get('task'));
+        if (this.data.task.keyy === '') {
+            console.log('project: ' + this.data.projectKey);
+            this.taskService.getProjectUsers(this.data.projectKey).subscribe(
+                (users) => {
+                    if (users.length === 0) {
+                        this.isEmpty = true;
+                    }
+                    this.users = users;
+                },
+                error => {
+                    this.error = 'Une erreur est survenue';
+                    this.loadEnd = true;
+                },
+                () => this.loadEnd = true
+            );
+        } else {
+            this.taskService.getOtherProjectUsers(this.data.task.keyy, this.data.projectKey).subscribe(
+                (users) => {
+                    if (users.length === 0) {
+                        this.isEmpty = true;
+                    }
+                    this.users = users;
+                },
+                error => {
+                    this.error = 'Une erreur est survenue';
+                    this.loadEnd = true;
+                },
+                () => this.loadEnd = true
+            );
+        }
     }
     initForm() {
         this.taskForm = this.formBuilder.group(
@@ -47,23 +80,33 @@ export class TaskFormComponent implements OnInit {
                 users: new FormArray([])
             }
         );
-        const formArray: FormArray = this.taskForm.get('users') as FormArray;
-        this.data.task.users.forEach((user => {
-            formArray.push(new FormControl(user.keyy));
-        }));
     }
     onSubmitForm() {
         this.submitted = true;
         this.error = '';
+        this.success = '';
         if (this.taskForm.invalid) {
             return;
         }
+        this.submitting = true;
         const formValue: Task = this.taskForm.value;
-        formValue.keyy = this.data.task.keyy;
-        this.taskService.add(formValue, this.data.list.keyy).subscribe( (task: Task) => {} /* this.user = user*/,
-            () => { console.log('Une erreur est survenue'); this.error = 'Une erreur'; }
+        const key = this.data.task.keyy;
+        formValue.keyy = key;
+        this.taskService.add(formValue, this.data.list.keyy).subscribe( (data) => {
+                this.data.task = data.task;
+                if (data.status === 0) {
+                    if ( key === '') {
+                        this.dialogRef.close({status: Constant.ADD_SUCCESS, task: data.task, mes: data.mes});
+                    } else {
+                        this.dialogRef.close({status: Constant.MODIFY_SUCCESS, task: data.task, mes: data.mes});
+                    }
+                } else {
+                    this.error = data.mes;
+                }
+            },
+            () => { this.error = 'Une erreur est survenue'; },
+            () => this.submitting = false
         );
-        console.log(formValue);
     }
 
     onCancelTask(task): void {
@@ -71,18 +114,18 @@ export class TaskFormComponent implements OnInit {
             data: { type: 'task', task: task}
         });
         dialogRef.afterClosed().subscribe(result => {
-            this.dialogRef.close(Constant.MESSAGE_BAD);
-            if (result === Constant.MESSAGE_OK) {
-                // remove item
+            if (result.status === Constant.DELETE_FAILED) {
+                this.error = result.mes;
+            } else {
+                this.dialogRef.close({status: result.status, key: result.key, mes: result.mes});
             }
-            console.log('The dialog was closed');
-            // dialog closed.If submission is ok, call getLists
         });
     }
 
-    onCancel(task): void {
-      this.dialogRef.close(Constant.MESSAGE_BAD);
+    onCancel(): void {
+        this.dialogRef.close({status: Constant.OPERATION_CANCELLED});
     }
+
     onCheckChange(event) {
         const formArray: FormArray = this.taskForm.get('users') as FormArray;
         if (event.checked) {
@@ -99,6 +142,35 @@ export class TaskFormComponent implements OnInit {
             });
         }
     }
+
+    onRemoveUserTask (user: User, task: Task) {
+        const dialogRef = this.dialog.open(DeleteTaskComponent, {
+            data: {user: user, task: task, type: 'userTask'}
+        });
+        dialogRef.afterClosed().subscribe(result => {
+            switch (result.status) {
+                case Constant.DELETE_SUCCESS:
+                    this.success = result.mes;
+                    this.data.task.users = this.data.task.users.filter(value => {
+                        if (value.keyy === result.projectKey) {
+                            value.group = value.group.filter(
+                                value2 => {
+                                    if (value2.keyy !== result.groupKey) {
+                                        return value2;
+                                    }
+                                }
+                            );
+                        }
+                        return value;
+                    });
+                    break;
+                case Constant.DELETE_FAILED:
+                    this.error = result.mes;
+                    break;
+            }
+        });
+    }
+
     selected(user: User): boolean {
         this.isSelected = false;
         this.data.task.users.forEach((_user) => {

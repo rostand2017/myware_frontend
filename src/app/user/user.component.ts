@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {User} from '../model/user';
 import {UserService} from '../services/user.service';
-import {MatDialog} from '@angular/material';
+import {MatDialog, MatSnackBar} from '@angular/material';
 import {UserFormComponent} from './user-form/user-form.component';
 import {DeleteUserComponent} from './delete-user/delete-user.component';
 import {Constant} from '../model/constant';
@@ -18,7 +18,7 @@ export class UserComponent implements OnInit {
   error = '';
   isEmpty = false;
   loadEnd = false;
-  constructor(private userService: UserService, public dialog: MatDialog) {
+  constructor(private userService: UserService, public dialog: MatDialog, private snackBar: MatSnackBar) {
   }
 
   ngOnInit() {
@@ -43,42 +43,44 @@ export class UserComponent implements OnInit {
     const dialogRef = this.dialog.open(UserFormComponent, {
         data: {user: this.user}
     });
-      dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe(result => {
+          switch (result.status) {
+              case Constant.ADD_SUCCESS:
+                  this.snackBar.open(result.mes, 'ok', {
+                      duration: 2000,
+                  });
+                  this.users.push(result.user);
+                  break;
+              case Constant.ADD_FAILED:
+                  this.snackBar.open(result.mes, 'ok', {
+                      duration: 2000,
+                  });
+                  break;
+          }
           console.log('The dialog was closed');
-          // dialog closed.If submission is ok, call getUsers
       });
   }
   onEdit(user: User) {
     const dialogRef = this.dialog.open(UserFormComponent, {
         data: user
     });
-      dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe(result => {
           switch (result.status) {
-              case Constant.DELETE_SUCCESS:
+              case Constant.MODIFY_SUCCESS:
+                  this.snackBar.open(result.mes, 'ok', {
+                      duration: 2000,
+                  });
                   this.users = this.users.filter(value => {
-                      if (value.keyy !== result.key) {
+                      if (value.keyy !== result.user.keyy) {
                           return value;
                       }
                   });
-                  break;
-              case Constant.DELETE_FAILED:
-                  // blabla
-                  // s
-                  break;
-              case Constant.ADD_SUCCESS:
-                  this.getUsers();
-                  break;
-              case Constant.ADD_FAILED:
-                  // blabla
-                  // s
-                  break;
-              case Constant.MODIFY_SUCCESS:
-                  // blabla
-                  // s
+                  this.users.push(result.user);
                   break;
               case Constant.MODIFY_FAILED:
-                  // blabla
-                  // s
+                  this.snackBar.open(result.mes, 'ok', {
+                      duration: 2000,
+                  });
                   break;
           }
           console.log('The dialog was closed');
@@ -88,9 +90,25 @@ export class UserComponent implements OnInit {
     const dialogRef = this.dialog.open(DeleteUserComponent, {
         data: user
     });
-      dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe(result => {
+          switch (result.status) {
+              case Constant.DELETE_SUCCESS:
+                  this.snackBar.open(result.mes, 'ok', {
+                      duration: 2000,
+                  });
+                  this.users = this.users.filter(value => {
+                      if (value.keyy !== result.key) {
+                          return value;
+                      }
+                  });
+                  break;
+              case Constant.DELETE_FAILED:
+                  this.snackBar.open(result.mes, 'ok', {
+                      duration: 2000,
+                  });
+                  break;
+          }
           console.log('The dialog was closed');
-          // dialog closed.If submission is ok, call getUsers
       });
   }
 }

@@ -13,6 +13,7 @@ import {Constant} from '../../model/constant';
 })
 export class GroupFromComponent implements OnInit {
   submitted = false;
+  submitting = false;
   error = '';
   group: Group;
   groupForm: FormGroup;
@@ -40,14 +41,22 @@ export class GroupFromComponent implements OnInit {
       if (this.groupForm.invalid) {
           return;
       }
+      this.submitting = true;
       const formValue: Group = this.groupForm.value;
       formValue.keyy = this.group.keyy;
-      this.groupService.add(formValue).subscribe( (group: Group) => {} /* this.user = user*/,
-          () => { console.log('Une erreur est survenue'); this.error = 'Une erreur'; }
+      this.groupService.add(formValue).subscribe( (data) => {
+              if (data.status === 0) {
+                  this.group = data.group;
+                  this.dialogRef.close({status: Constant.MODIFY_SUCCESS, group: data.group, mes: data.mes});
+              } else {
+                  this.error = data.mes;
+              }
+          },
+          () => {this.error = 'Une erreur est survenue'; },
+          () => this.submitting = false
       );
-      console.log(formValue);
   }
   onCancel(): void {
-    this.dialogRef.close(Constant.MESSAGE_BAD);
+      this.dialogRef.close({status: Constant.OPERATION_CANCELLED});
   }
 }

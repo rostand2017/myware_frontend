@@ -1,6 +1,7 @@
 <div class="row">
   <div class="col-md-8 text-center offset-md-2">
     <form class="example-container" [formGroup]="userForm" (ngSubmit)="onSubmitForm()">
+      <mat-progress-bar mode="indeterminate" *ngIf="submitting"></mat-progress-bar>
       <h3>Utilisateur</h3>
       <span class="text-primary" *ngIf="success!=''">{{success}}</span>
       <mat-error *ngIf="error!=''">{{error}}</mat-error>
@@ -50,8 +51,8 @@
         </mat-error>
       </mat-form-field>
       <div class="text-center">
-        <button mat-button color="primary" type="submit">Enregistrer <mat-icon>good</mat-icon></button>
-        <button mat-button class="text-danger" (click)="onCancel()" type="button">Fermer <mat-icon>Cancel</mat-icon></button>
+        <button mat-button color="primary" type="submit" [disabled]="submitting">Enregistrer <mat-icon>check</mat-icon></button>
+        <button mat-button class="text-danger" (click)="onCancel()" type="button">Fermer <mat-icon>cancel</mat-icon></button>
       </div>
     </form>
   </div>

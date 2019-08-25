@@ -4,33 +4,29 @@ import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Group} from '../model/group';
 import {Observable, of} from 'rxjs';
 import {User} from '../model/user';
+import {Constant} from '../model/constant';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GroupService {
-  GROUP: Group[] = [
-      new Group('629JGST202', 'Global Groups', 'Groupe global ou se trouve tous les employés'),
-      new Group('629JGST20G', 'Marketing', 'Groupe de marketing'),
-      new Group('629JGST20S', 'Dev', 'Groupe de développeur'),
-  ];
   private groupUrl = 'api/group';
   httpOptions = {
       headers: new HttpHeaders({ 'Content-Type': 'application/json' })
   };
   constructor(private http: HttpClient) { }
 
-  getGroups(): Group[] {
-      return this.GROUP;
-      /*return this.http.get<Group[]>(this.groupUrl).pipe(
-          tap( (group: Group[])_ => this.log(`fetched group`)),
-          catchError(this.handleError<any>('error'))
-      );*/
+  getGroups(): Observable<Group[]> {
+      return this.http.get<Group[]>(Constant.BASE_URL + 'group/all');
   }
-  add(group: Group): Observable<Group> {
-      return this.http.post<Group>(this.groupUrl, group, this.httpOptions).pipe(
-          tap( (_group: Group) => this.log(`fetched group id=${_group.keyy}`)),
-          catchError(this.handleError<Group>('error'))
+
+  otherGroupProject(key: String): Observable<Group[]> {
+      return this.http.post<Group[]>(Constant.BASE_URL + 'project/othergroup', {keyy: key}, this.httpOptions);
+  }
+  add(group: Group): Observable<any> {
+      return this.http.post<any>(Constant.BASE_URL + 'group/edit', group, this.httpOptions).pipe(
+          tap( (_group) => this.log(`fetched group id=${_group.keyy}`)),
+          catchError(this.handleError<any>('error'))
       );
   }
   addMember(users: any, groupKey: String): Observable<any> {
@@ -39,17 +35,8 @@ export class GroupService {
           catchError(this.handleError<any>('error'))
       );
   }
-  getGroup(): Observable<Group> {
-      return this.http.get<Group>(this.groupUrl).pipe(
-          tap(_ => this.log(`fetched hero id`)),
-          catchError(this.handleError<any>('error'))
-      );
-  }
-  delete(group: Group | number): Observable<Group> {
-      const httpOptions = {
-          headers: new HttpHeaders({ 'Content-Type': 'application/json' })
-      };
-      return this.http.delete<Group>('', httpOptions).pipe(
+  delete(groupKey: String): Observable<any> {
+      return this.http.post<any>('', {key: groupKey}, this.httpOptions).pipe(
           tap(_ => this.log(`group deleted`)),
           catchError(this.handleError<any>('error'))
       );

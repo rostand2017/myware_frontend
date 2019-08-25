@@ -13,6 +13,7 @@ export class ProfilComponent implements OnInit {
   user: User = new User('', '', '', '', '', '', '', '', '');
   userForm: FormGroup;
   submitted = false;
+  submitting = false;
   error = '';
   success = '';
 
@@ -49,6 +50,7 @@ export class ProfilComponent implements OnInit {
       if (this.userForm.invalid) {
           return;
       }
+      this.submitting = true;
       const formValue: User = this.userForm.value;
       formValue.keyy = this.user.keyy;
       this.userService.modifyMe(formValue).subscribe( (data) => {
@@ -60,7 +62,8 @@ export class ProfilComponent implements OnInit {
                 this.error = data.mes;
             }
           },
-          () => { console.log('Une erreur est survenue'); this.error = 'Une erreur est survenue'; }
+          () => { console.log('Une erreur est survenue'); this.error = 'Une erreur est survenue'; },
+          () => this.submitting = false
       );
       console.log(formValue);
   }

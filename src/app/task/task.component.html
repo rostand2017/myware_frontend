@@ -5,7 +5,32 @@
       <h4>Listes de tâches</h4>
     </div>
   </div>
+  <mat-progress-bar mode="indeterminate" *ngIf="!loadEnd"></mat-progress-bar>
+  <div class="text-center" *ngIf="!loadEnd"><span>Patientez un instant ...</span></div>
+  <div class="text-center" *ngIf="error!=''"><mat-error>{{error}}</mat-error></div>
   <div class="card-deck">
+    <mat-card role="region" style="display: inline-block" class="m-2">
+      <mat-card-title>
+        <button mat-button>
+          <button class="text-light" mat-icon-button style="background: #673ab7;"><mat-icon>list_alt</mat-icon></button>
+          Liste {{lists.length + 1}}
+        </button>
+      </mat-card-title>
+      <mat-card-content class="mb-3">
+        <form [formGroup]="listForm" (ngSubmit)="onSubmitList(inputList)">
+          <div class="form-group">
+            <mat-form-field>
+              <mat-label>Nouvelle liste</mat-label>
+              <input matInput type="text" #inputList (click)="onSelectedList(list)" formControlName="name" placeholder="Attribuez un nom à la liste">
+              <mat-error *ngIf="submittedList && listForm.controls.name.errors">
+                <mat-error *ngIf="listForm.controls.name.errors.required"></mat-error>
+              </mat-error>
+            </mat-form-field>
+            <button mat-button color="warn" [disabled]="submitting" type="submit">Ajouter</button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
     <mat-card role="region" style="display: inline-block" class="m-2" *ngFor="let list of lists; let i = index">
       <mat-card-title style="display: inline">
         <button mat-button (click)="onSelectedList(list)">
@@ -32,29 +57,6 @@
           </mat-form-field>
           <button (click)="onEditList(list)" mat-button color="primary">Modifier</button>
         </div>
-      </mat-card-content>
-    </mat-card>
-
-    <mat-card role="region" style="display: inline-block" class="m-2">
-      <mat-card-title>
-        <button mat-button>
-          <button class="text-light" mat-icon-button style="background: #673ab7;"><mat-icon>list_alt</mat-icon></button>
-          Liste {{lists.length + 1}}
-        </button>
-      </mat-card-title>
-      <mat-card-content class="mb-3">
-        <form [formGroup]="listForm" (ngSubmit)="onSubmitList()">
-          <div class="form-group">
-            <mat-form-field>
-              <mat-label>Nom de la liste</mat-label>
-              <input matInput type="text" (click)="onSelectedList(list)" formControlName="name" placeholder="Renommer la liste">
-              <mat-error *ngIf="submittedList && listForm.controls.name.errors">
-                <mat-error *ngIf="listForm.controls.name.errors.required"></mat-error>
-              </mat-error>
-            </mat-form-field>
-            <button mat-button color="warn" (click)="onSubmitList()" type="submit">Ajouter</button>
-          </div>
-        </form>
       </mat-card-content>
     </mat-card>
   </div>

@@ -1,15 +1,20 @@
 <div class="p-2">
-  <div>
-    <div class="col-md-6">
+  <div class="m-4">
+    <div class="col-md-12">
       <h4>Discussion directe</h4>
     </div>
   </div>
-  <mat-card class="m-2" *ngFor="let user of users">
+  <mat-progress-bar mode="indeterminate" *ngIf="!loadEnd"></mat-progress-bar>
+  <div class="text-center" *ngIf="!loadEnd"><span>Patientez un instant ...</span></div>
+  <div class="text-center" *ngIf="error!=''"><mat-error>{{error}}</mat-error></div>
+  <hr *ngIf="isEmpty">
+  <div class="m-2" *ngFor="let user of users">
     <mat-card-title>
       <button mat-button (click)="onDiscussion(user)">
         <button class="text-light" mat-icon-button style="background: #673ab7;"><mat-icon>account_circle</mat-icon></button>
         {{user.subname}} {{user.name}} - {{user.fonction}}
       </button>
     </mat-card-title>
-  </mat-card>
+    <hr>
+  </div>
 </div>

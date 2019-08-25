@@ -30,23 +30,17 @@ export class UserService {
           )
       );
     }
-    getUsers(): User[] {
-        return this.USER;
-    }
     getActiveUsers(): Observable<User[]> {
         return this.http.get<User[]>(Constant.BASE_URL + 'user/active');
     }
+    getDiscussionUsers(): Observable<User[]> {
+        return this.http.get<User[]>(Constant.BASE_URL + 'user/discussion');
+    }
     getUsersGroup(): User[] {
-    return this.USER;
+        return this.USER;
     }
     getNotMember(groupKey: String): User[] {
-    return this.USER;
-    }
-    getProjectUsers(projectKey: String): User[] {
-    return this.USER;
-    }
-    getIntervenant(taskKey: String): User[] {
-    return this.USER;
+        return this.USER;
     }
     login(email: String, password: String): Observable<any> {
       return this.http.post<any>(Constant.BASE_URL + 'login', {email: email, password: password}, this.httpOptions);

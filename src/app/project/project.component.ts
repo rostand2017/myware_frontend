@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import {DeleteProjectComponent} from '../project/delete-project/delete-project.component';
 import {Project} from '../model/project';
-import {MatDialog} from '@angular/material';
+import {MatDialog, MatSnackBar} from '@angular/material';
 import {ProjectService} from '../services/project.service';
 import {Router} from '@angular/router';
 import {ProjectFormComponent} from './project-from/project-form.component';
 import {Group} from '../model/group';
+import {Constant} from '../model/constant';
+import {DeleteGroupProjectComponent} from './delete-group-project/delete-group-project.component';
 
 @Component({
   selector: 'app-project',
@@ -13,17 +15,32 @@ import {Group} from '../model/group';
   styleUrls: ['./project.component.css']
 })
 export class ProjectComponent implements OnInit {
-    projects: Project[];
+    projects: Project[] = [];
     project: Project;
+    error = '';
+    isEmpty = false;
+    loadEnd = false;
 
-    constructor(public dialog: MatDialog, private projectService: ProjectService, private router: Router) { }
+    constructor(public dialog: MatDialog, private projectService: ProjectService, private router: Router,
+                private snackBar: MatSnackBar) { }
 
     ngOnInit() {
         this.getProjects();
     }
     getProjects() {
-        this.projects = this.projectService.getProjects();
-        // alert(this.projects[0].name);
+        this.projectService.getProjects().subscribe(
+            (projects) => {
+                if (projects.length === 0) {
+                    this.isEmpty = true;
+                }
+                this.loadEnd = true;
+                this.projects = projects;
+            },
+            error => {
+                this.error = 'Une erreur est survenue';
+                this.loadEnd = true;
+            }
+        );
     }
 
     openDialog() {
@@ -31,8 +48,20 @@ export class ProjectComponent implements OnInit {
             data: new Project('', '', [new Group('', '', '')] )
         });
         dialogRef.afterClosed().subscribe(result => {
-            console.log('The dialog was closed ' + result );
-            // dialog closed.If submission is ok, call getProjects
+            switch (result.status) {
+                case Constant.MODIFY_SUCCESS:
+                    this.snackBar.open(result.mes, 'ok', {
+                        duration: 2000,
+                    });
+                    this.projects.push(result.project);
+                    this.isEmpty = false;
+                    break;
+                case Constant.MODIFY_FAILED:
+                    this.snackBar.open(result.mes, 'ok', {
+                        duration: 2000,
+                    });
+                    break;
+            }
         });
     }
 
@@ -41,8 +70,24 @@ export class ProjectComponent implements OnInit {
             data: project
         });
         dialogRef.afterClosed().subscribe(result => {
-            console.log('The dialog was closed');
-            // dialog closed.If submission is ok, call getProjects
+            switch (result.status) {
+                case Constant.MODIFY_SUCCESS:
+                    this.snackBar.open(result.mes, 'ok', {
+                        duration: 2000,
+                    });
+                    this.projects = this.projects.filter(value => {
+                        if (value.keyy !== result.project.keyy) {
+                            return value;
+                        }
+                    });
+                    this.projects.push(result.project);
+                    break;
+                case Constant.MODIFY_FAILED:
+                    this.snackBar.open(result.mes, 'ok', {
+                        duration: 2000,
+                    });
+                    break;
+            }
         });
     }
 
@@ -51,8 +96,58 @@ export class ProjectComponent implements OnInit {
             data: project
         });
         dialogRef.afterClosed().subscribe(result => {
-            console.log('The dialog was closed');
-            // dialog closed.If submission is ok, call getProjects
+            switch (result.status) {
+                case Constant.DELETE_SUCCESS:
+                    this.snackBar.open(result.mes, 'ok', {
+                        duration: 2000,
+                    });
+                    this.projects = this.projects.filter(value => {
+                        if (value.keyy !== result.key) {
+                            return value;
+                        }
+                    });
+                    if (this.projects.length === 0) {
+                        this.isEmpty = true;
+                    }
+                    break;
+                case Constant.DELETE_FAILED:
+                    this.snackBar.open(result.mes, 'ok', {
+                        duration: 2000,
+                    });
+                    break;
+            }
+        });
+    }
+
+    onRemoveGroupProject (group: Group, project: Project) {
+        const dialogRef = this.dialog.open(DeleteGroupProjectComponent, {
+            data: {project: project, group: group}
+        });
+        dialogRef.afterClosed().subscribe(result => {
+            switch (result.status) {
+                case Constant.DELETE_SUCCESS:
+                    this.snackBar.open(result.mes, 'ok', {
+                        duration: 2000,
+                    });
+                    this.projects = this.projects.filter(value => {
+                        if (value.keyy === result.projectKey) {
+                            value.group = value.group.filter(
+                                value2 => {
+                                    if (value2.keyy !== result.groupKey) {
+                                        return value2;
+                                    }
+                                }
+                            );
+                        }
+                        return value;
+                    });
+                    break;
+                case Constant.DELETE_FAILED:
+                    this.snackBar.open(result.mes, 'ok', {
+                        duration: 2000,
+                    });
+                    break;
+            }
         });
     }
 }

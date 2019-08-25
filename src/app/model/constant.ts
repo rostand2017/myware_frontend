@@ -7,5 +7,6 @@ export class Constant {
     static ADD_FAILED = 6;
     static MODIFY_FAILED = 7;
     static DELETE_FAILED = 8;
+    static OPERATION_CANCELLED = 9;
     static BASE_URL = 'http://myware.test/app_dev.php/';
 }

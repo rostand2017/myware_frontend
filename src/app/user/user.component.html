@@ -1,8 +1,11 @@
-<div class="m-2">
-  <div class="col-md-6">
-    <h4>Utilisateurs <button (click)="openDialog()" class="text-light text-center" style="background: #673ab7;" mat-icon-button>+</button></h4>
+<div class="m-4">
+  <div class="col-md-12">
+    <h4>Utilisateurs
+        <button (click)="openDialog()" class="text-light text-center float-right clearfix" style="background: #673ab7;" mat-icon-button>+</button>
+    </h4>
   </div>
 </div>
+<mat-progress-bar mode="indeterminate" *ngIf="!loadEnd"></mat-progress-bar>
 <div class="text-center" *ngIf="error!=''"><mat-error>{{error}}</mat-error></div>
 <div class="text-center" *ngIf="!loadEnd"><span>Patientez un instant ...</span></div>
 <div class="text-center" *ngIf="isEmpty"><span>Aucun utilisateur</span></div>

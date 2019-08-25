@@ -1,0 +1,7 @@
+<div mat-dialog-content>
+  <p>Êtes vous sûr de vouloir retirer le groupe <b>{{data.group.name}}</b> de ce projet ?</p>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onNoClick()">NON</button>
+  <button mat-button (click)="onDeleteProject()"  cdkFocusInitial>OUI</button>
+</div>
