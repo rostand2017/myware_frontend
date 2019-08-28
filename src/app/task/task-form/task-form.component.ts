@@ -2,16 +2,10 @@ import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
 import {Task} from '../../model/task';
 import {TaskService} from '../../services/task.service';
-import {UserFormComponent} from '../../user/user-form/user-form.component';
 import {Constant} from '../../model/constant';
 import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
-import {Group} from '../../model/group';
-import {UserService} from '../../services/user.service';
 import {User} from '../../model/user';
-import {ActivatedRoute} from '@angular/router';
 import {DeleteTaskComponent} from '../delete-task/delete-task.component';
-import {Project} from '../../model/project';
-import {DeleteGroupProjectComponent} from '../../project/delete-group-project/delete-group-project.component';
 
 @Component({
   selector: 'app-task-form',
@@ -25,7 +19,6 @@ export class TaskFormComponent implements OnInit {
     data: any;
     users: User[] = [];
     taskForm: FormGroup;
-    isSelected = false;
     isEmpty = false;
     loadEnd = false;
     submitting = false;
@@ -61,6 +54,7 @@ export class TaskFormComponent implements OnInit {
                     if (users.length === 0) {
                         this.isEmpty = true;
                     }
+                    console.log(users);
                     this.users = users;
                 },
                 error => {
@@ -75,7 +69,7 @@ export class TaskFormComponent implements OnInit {
         this.taskForm = this.formBuilder.group(
             {
                 description: [this.data.task.description, Validators.required],
-                endDate: [this.data.task.endDate, Validators.required],
+                endDate: [new Date(this.data.task.endDate), Validators.required],
                 isCompleted: [this.data.task.isCompleted],
                 users: new FormArray([])
             }
@@ -104,7 +98,10 @@ export class TaskFormComponent implements OnInit {
                     this.error = data.mes;
                 }
             },
-            () => { this.error = 'Une erreur est survenue'; },
+            () => {
+                this.error = 'Une erreur est survenue';
+                this.submitting = false;
+            },
             () => this.submitting = false
         );
     }
@@ -127,6 +124,7 @@ export class TaskFormComponent implements OnInit {
     }
 
     onCheckChange(event) {
+        console.log('key: ' + event.source.value);
         const formArray: FormArray = this.taskForm.get('users') as FormArray;
         if (event.checked) {
             formArray.push(new FormControl(event.source.value));
@@ -144,6 +142,7 @@ export class TaskFormComponent implements OnInit {
     }
 
     onRemoveUserTask (user: User, task: Task) {
+        this.success = '';
         const dialogRef = this.dialog.open(DeleteTaskComponent, {
             data: {user: user, task: task, type: 'userTask'}
         });
@@ -151,18 +150,12 @@ export class TaskFormComponent implements OnInit {
             switch (result.status) {
                 case Constant.DELETE_SUCCESS:
                     this.success = result.mes;
-                    this.data.task.users = this.data.task.users.filter(value => {
-                        if (value.keyy === result.projectKey) {
-                            value.group = value.group.filter(
-                                value2 => {
-                                    if (value2.keyy !== result.groupKey) {
-                                        return value2;
-                                    }
-                                }
-                            );
+                    task.users = task.users.filter(value => {
+                        if (value.keyy !== result.key) {
+                            return value;
                         }
-                        return value;
                     });
+                    console.log(task.users);
                     break;
                 case Constant.DELETE_FAILED:
                     this.error = result.mes;
@@ -171,7 +164,7 @@ export class TaskFormComponent implements OnInit {
         });
     }
 
-    selected(user: User): boolean {
+    /*selected(user: User): boolean {
         this.isSelected = false;
         this.data.task.users.forEach((_user) => {
             if ( _user.keyy === user.keyy ) {
@@ -180,5 +173,5 @@ export class TaskFormComponent implements OnInit {
             }
         });
         return this.isSelected;
-    }
+    }*/
 }

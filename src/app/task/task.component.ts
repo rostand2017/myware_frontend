@@ -60,31 +60,21 @@ export class TaskComponent implements OnInit {
             }
         });
         dialogRef.afterClosed().subscribe(result => {
+            if (!result) {
+                return;
+            }
             switch (result.status) {
-                case Constant.MODIFY_SUCCESS:
-                    this.snackBar.open(result.mes, 'ok', {
-                        duration: 2000,
-                    });
-                    this.list.task = this.list.task.filter(
-                        value => {
-                            if (value.keyy === result.task.keyy ) {
-                                return result;
-                            }
-                            return value;
-                        }
-                    );
-                    break;
                 case Constant.ADD_SUCCESS:
                     this.snackBar.open(result.mes, 'ok', {
                         duration: 2000,
                     });
-                    this.list.task.push(result.task);
+                    list.task.push(result.task);
                     break;
                 case Constant.DELETE_SUCCESS:
                     this.snackBar.open(result.mes, 'ok', {
                         duration: 2000,
                     });
-                    list.task = this.list.task.filter(
+                    list.task = list.task.filter(
                         value => {
                             if (value.keyy !== result.key) {
                                 return value;
@@ -101,31 +91,27 @@ export class TaskComponent implements OnInit {
             data: { task: task, list: list, projectKey: this.route.snapshot.paramMap.get('project')}
         });
         dialogRef.afterClosed().subscribe(result => {
+            if (!result) {
+                return;
+            }
             switch (result.status) {
                 case Constant.MODIFY_SUCCESS:
                     this.snackBar.open(result.mes, 'ok', {
                         duration: 2000,
                     });
-                    this.list.task = this.list.task.filter(
-                        value => {
-                            if (value.keyy === result.task.keyy ) {
-                                return result;
-                            }
-                            return value;
-                        }
-                    );
-                    break;
-                case Constant.ADD_SUCCESS:
-                    this.snackBar.open(result.mes, 'ok', {
-                        duration: 2000,
-                    });
-                    this.list.task.push(result.task);
+                    const taskResult = result.task;
+                    console.log(task);
+                    task.description = taskResult.description;
+                    task.endDate = taskResult.endDate;
+                    task.isCompleted = taskResult.isCompleted;
+                    task.users = taskResult.users;
+                    console.log(task);
                     break;
                 case Constant.DELETE_SUCCESS:
                     this.snackBar.open(result.mes, 'ok', {
                         duration: 2000,
                     });
-                    list.task = this.list.task.filter(
+                    list.task = list.task.filter(
                         value => {
                             if (value.keyy !== result.key) {
                                 return value;

@@ -46,7 +46,7 @@ export class DeleteTaskComponent implements OnInit {
             this.taskService.deleteUserTask(this.data.user, this.data.task).subscribe(
                 (data) => {
                     if (data.status === 0 ) {
-                        this.dialogRef.close( {key: this.data.task.keyy, status: Constant.DELETE_SUCCESS, mes: data.mes});
+                        this.dialogRef.close( {key: this.data.user.keyy, status: Constant.DELETE_SUCCESS, mes: data.mes});
                     } else {
                         this.dialogRef.close({status: Constant.DELETE_FAILED, mes: data.mes});
                     }

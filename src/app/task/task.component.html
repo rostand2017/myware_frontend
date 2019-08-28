@@ -46,8 +46,8 @@
       <mat-card-content class="mb-3">
         <mat-list *ngIf="list.task">
           <mat-list-item *ngFor="let task of list.task">
-            <mat-icon *ngIf="task.isCompleted" color="primary" matListIcon>check</mat-icon>
             <button mat-button (click)="onEditTask(task, list)">{{task.description}}</button>
+            <mat-icon *ngIf="task.isCompleted" color="primary" matListIcon>check</mat-icon>
           </mat-list-item>
         </mat-list>
         <div class="form-group">

@@ -43,7 +43,8 @@ export class TaskService {
         return this.http.post<any>(Constant.BASE_URL + 'task/remove', {keyy: task.keyy}, this.httpOptions);
     }
     deleteUserTask(user: User, task: Task): Observable<any> {
-        return this.http.post<any>(Constant.BASE_URL + 'task/removeuser', {keyy: task.keyy}, this.httpOptions);
+        return this.http.post<any>(Constant.BASE_URL + 'task/removeuser',
+            {taskKey: task.keyy, userKey: user.keyy }, this.httpOptions);
     }
     deleteList(list: List): Observable<any> {
         return this.http.post<any>(Constant.BASE_URL + 'list/remove', {keyy: list.keyy}, this.httpOptions);
