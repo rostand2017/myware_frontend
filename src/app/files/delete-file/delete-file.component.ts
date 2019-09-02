@@ -20,13 +20,25 @@ export class DeleteFileComponent implements OnInit {
     onDelete(): void {
         if ( this.data.type === 'folder' ) {
             this.fileService.deleteFolder(this.data.file).subscribe(
-                (folder) => {this.dialogRef.close(Constant.MESSAGE_OK); console.log('Dossier supprimé'); },
-                (error) => { this.dialogRef.close(Constant.MESSAGE_OK); console.log('Une erreur est survenue'); }
+                (data) => {
+                    if (data.status === 0 ) {
+                        this.dialogRef.close( {key: this.data.file.keyy, status: Constant.DELETE_SUCCESS, mes: data.mes});
+                    } else {
+                        this.dialogRef.close({status: Constant.DELETE_FAILED, mes: data.mes});
+                    }
+                },
+                (error) => this.dialogRef.close(Constant.MESSAGE_OK)
             );
         } else {
-            this.fileService.deleteFile(this.data.file).subscribe(
-                (file) => {this.dialogRef.close(Constant.MESSAGE_OK); console.log('Fichier supprimé'); },
-                (error) => { this.dialogRef.close(Constant.MESSAGE_OK); console.log('Une erreur est survenue'); }
+            this.fileService.deleteFile(this.data.file.keyy).subscribe(
+                (data) => {
+                    if (data.status === 0 ) {
+                        this.dialogRef.close( {key: this.data.file.keyy, status: Constant.DELETE_SUCCESS, mes: data.mes});
+                    } else {
+                        this.dialogRef.close({status: Constant.DELETE_FAILED, mes: data.mes});
+                    }
+                },
+                (error) => this.dialogRef.close(Constant.MESSAGE_OK)
             );
         }
     }

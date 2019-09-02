@@ -1,7 +1,10 @@
+import {SafeUrl} from '@angular/platform-browser';
+
 export class File {
     private _keyy: String;
     private _name: String;
     private _link: String;
+    private _thumbnail: SafeUrl;
     private _extension: String;
     private _size: number;
     private _createdAt: String;
@@ -37,6 +40,14 @@ export class File {
 
     set link(value: String) {
         this._link = value;
+    }
+
+    get thumbnail(): SafeUrl {
+        return this._thumbnail;
+    }
+
+    set thumbnail(value: SafeUrl) {
+        this._thumbnail = value;
     }
 
     get extension(): String {

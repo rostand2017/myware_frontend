@@ -15,13 +15,17 @@ import {GroupService} from '../../services/group.service';
 })
 export class ShareComponent implements OnInit {
     submitted = false;
+    submitting = false;
     error = '';
     data: any;
     users: User[] = [];
     groups: Group[] = [];
     fileForm: FormGroup;
     isEmpty = false;
-    loadEnd = false;
+    loadEndGroups = false;
+    loadEndUsers = false;
+    isEmptyGroups = false;
+    isEmptyUsers = false;
 
     constructor(public dialog: MatDialog, public dialogRef: MatDialogRef<ShareComponent>, @Inject(MAT_DIALOG_DATA) public _data: any,
                 private fileService: FileService, private groupService: GroupService, private formBuilder: FormBuilder,
@@ -35,26 +39,39 @@ export class ShareComponent implements OnInit {
         this.initForm();
     }
     getUsers() {
-        // this.users = this.userService.getUsers();
+        this.userService.getDiscussionUsers().subscribe(
+            (users) => {
+                if (users.length === 0) {
+                    this.isEmptyGroups = true;
+                }
+                this.loadEndUsers = true;
+                this.users = users;
+            },
+            error => {
+                this.error = 'Une erreur est survenue';
+                this.loadEndUsers = true;
+            }
+        );
     }
     getGroups() {
         this.groupService.getGroups().subscribe(
             (groups) => {
                 if (groups.length === 0) {
-                    this.isEmpty = true;
+                    this.isEmptyGroups = true;
                 }
-                this.loadEnd = true;
+                this.loadEndGroups = true;
                 this.groups = groups;
             },
             error => {
                 this.error = 'Une erreur est survenue';
-                this.loadEnd = true;
+                this.loadEndGroups = true;
             }
         );
     }
     initForm() {
         this.fileForm = this.formBuilder.group(
             {
+                keyy: [this.data.keyy],
                 users: new FormArray([]),
                 groups: new FormArray([]),
             }
@@ -66,14 +83,35 @@ export class ShareComponent implements OnInit {
         if (this.fileForm.invalid) {
             return;
         }
+        this.submitting = true;
         const formValue = this.fileForm.value;
         if (this.data.extension) {
-            this.fileService.shareFile(formValue, this.data.key).subscribe( (data: any) => {} /* this.user = user*/,
-                () => { console.log('Une erreur est survenue'); this.error = 'Une erreur'; }
+            this.fileService.shareFile(formValue).subscribe( (data: any) => {
+                    if (data.status === 0) {
+                        this.dialogRef.close({status: Constant.SHARE_SUCCESS, mes: data.mes});
+                    } else {
+                        this.error = data.mes;
+                    }
+                },
+                () => {
+                    this.error = 'Une erreur est survenue';
+                    this.submitting = false;
+                },
+                () => this.submitting = false
             );
         } else {
-            this.fileService.shareFolder(formValue, this.data.key).subscribe( (data: any) => {} /* this.user = user*/,
-                () => { console.log('Une erreur est survenue'); this.error = 'Une erreur'; }
+            this.fileService.shareFolder(formValue).subscribe( (data: any) => {
+                        if (data.status === 0) {
+                            this.dialogRef.close({status: Constant.SHARE_SUCCESS, mes: data.mes});
+                        } else {
+                            this.error = data.mes;
+                        }
+                    },
+                () => {
+                    this.error = 'Une erreur est survenue';
+                    this.submitting = false;
+                },
+                () => this.submitting = false
             );
         }
         console.log(formValue);

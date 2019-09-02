@@ -89,7 +89,10 @@ export class ProjectFormComponent implements OnInit {
                     this.error = data.mes;
                 }
             },
-            () => {this.error = 'Une erreur est survenue'; },
+            () => {
+                this.error = 'Une erreur est survenue';
+                this.submitting = false;
+            },
             () => this.submitting = false
         );
         console.log(formValue);

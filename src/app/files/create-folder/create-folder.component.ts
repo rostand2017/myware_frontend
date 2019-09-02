@@ -13,6 +13,7 @@ import {File} from '../../model/file';
 })
 export class CreateFolderComponent implements OnInit {
     submitted = false;
+    submitting = false;
     error = '';
     file: any;
     parentKey: String;
@@ -44,15 +45,33 @@ export class CreateFolderComponent implements OnInit {
         if (this.file.extension) {
             const formValue: File = this.fileForm.value;
             this.file.name = formValue.name;
-            this.fileService.addFile(this.file, this.parentKey).subscribe( (file: File) => {} /* this.user = user*/,
-                () => { console.log('Une erreur est survenue'); this.error = 'Une erreur'; }
+            const formData = new FormData();
+            formData.append('name', this.file.name);
+            formData.append('keyy', this.file.keyy);
+            this.fileService.addFile(formData).subscribe( (data) => {
+                    if (data.status === 0) {
+                        this.file = data.file;
+                        this.dialogRef.close({status: Constant.MODIFY_SUCCESS, file: data.file, mes: data.mes});
+                    } else {
+                        this.error = data.mes;
+                    }
+                } ,
+                () => {this.error = 'Une erreur est survenue'; },
+                () => this.submitting = false
             );
-            console.log(this.file);
         } else {
             const formValue: Folder = this.fileForm.value;
             formValue.keyy = this.file.keyy;
-            this.fileService.addFolder(formValue, this.parentKey).subscribe( (folder: Folder) => {} /* this.user = user*/,
-                () => { console.log('Une erreur est survenue'); this.error = 'Une erreur'; }
+            this.fileService.addFolder(formValue, this.parentKey).subscribe( (data) => {
+                    if (data.status === 0) {
+                        this.file = data.folder;
+                        this.dialogRef.close({status: Constant.MODIFY_SUCCESS, file: data.folder, mes: data.mes});
+                    } else {
+                        this.error = data.mes;
+                    }
+                },
+                () => {this.error = 'Une erreur est survenue'; },
+                () => this.submitting = false
             );
             console.log(formValue);
         }

@@ -1,21 +1,26 @@
 <div class="row">
   <div class="col-md-12">
     <form class="example-container" [formGroup]="fileForm" (ngSubmit)="onSubmitForm()">
-      <h4 class="text-primary" *ngIf="data.extension"><mat-icon>share</mat-icon> Partager le fichier {{data.name}} </h4>
-      <h4 class="text-primary" *ngIf="!data.extension"><mat-icon>share</mat-icon> Partager le dossier {{data.name}} </h4>
-      <mat-error *ngIf="error!=''">{{error}}</mat-error>
+      <h4 class="text-primary" *ngIf="data.extension"><mat-icon>share</mat-icon> Partagez le fichier {{data.name}} </h4>
+      <h4 class="text-primary" *ngIf="!data.extension"><mat-icon>share</mat-icon> Partagez le dossier {{data.name}} </h4>
       <h5>Groupes</h5>
+      <mat-progress-bar mode="indeterminate" *ngIf="!loadEndUsers || !loadEndGroups || submitting"></mat-progress-bar>
+      <div class="text-center" *ngIf="!loadEndUsers || !loadEndGroups"><span>Patientez un instant ...</span></div>
+      <mat-error class="text-center" *ngIf="error!=''">{{error}}</mat-error>
       <div class="table-responsive">
         <div class="form-group" *ngFor="let group of groups; let i=index">
-          <mat-checkbox color="primary" [value]="group.key" (change)="onCheckChangeGroup($event)">{{group.name}} </mat-checkbox>
+          <mat-checkbox color="primary" [value]="group.keyy" (change)="onCheckChangeGroup($event)">{{group.name}} </mat-checkbox>
         </div>
       </div>
+      <div class="text-center" *ngIf="isEmptyGroups"><span>Aucun groupe</span></div>
+      <hr>
       <h5>Utilisateurs</h5>
       <div class="table-responsive">
         <div class="form-group" *ngFor="let user of users; let i=index">
-          <mat-checkbox color="primary" [value]="user.key" (change)="onCheckChangeUser($event)">{{user.name}}</mat-checkbox>
+          <mat-checkbox color="primary" [value]="user.keyy" (change)="onCheckChangeUser($event)">{{user.subname}} {{user.name}}</mat-checkbox>
         </div>
       </div>
+      <div class="text-center" *ngIf="isEmptyUsers"><span>Aucun utilisateur</span></div>
 
       <div class="text-center">
         <button mat-button color="primary" type="submit">Partager<mat-icon>check_circle</mat-icon></button>

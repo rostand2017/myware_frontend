@@ -7,11 +7,9 @@ export class Folder {
     private _files: File[] = [];
     private _createdAt: String;
 
-    constructor(keyy: String, name: String, folders: Folder[], files: File[], createdAt: String) {
+    constructor(keyy: String, name: String, createdAt: String) {
         this._keyy = keyy;
         this._name = name;
-        this._folders = folders;
-        this._files = files;
         this._createdAt = createdAt;
     }
 

@@ -1,5 +1,4 @@
 <div class="col-md-12">
-  <button mat-button (click)="onBack()" [disabled]="isDisabled()"><mat-icon>arrow_back</mat-icon></button>
   <h4 class="m-2">Mes fichiers
     <button class="float-right" mat-icon-button [matMenuTriggerFor]="menu"><mat-icon>more_vert</mat-icon></button>
     <mat-menu #menu="matMenu">
@@ -10,27 +9,43 @@
       </button>
     </mat-menu>
   </h4>
+  <div class="">
+    <!--<button mat-button (click)="onBack()" [disabled]="isDisabled()"><mat-icon>arrow_back</mat-icon></button>-->
+    <button class="breadcrumb-item" mat-button (click)="openFolder(rootFolder, true)" [disabled]="isDisabled(rootFolder)">/</button>
+    <button class="" *ngFor="let folder of breadCrumbFolders" mat-button (click)="openFolder(folder, true)" [disabled]="isDisabled(folder)">{{folder.name}}</button>
+  </div>
+  <mat-progress-bar mode="indeterminate" *ngIf="!loadEndFiles || !loadEndFolders || !loadEndUpload"></mat-progress-bar>
+  <div class="text-center" *ngIf="!loadEndFiles || !loadEndFolders"><span>Patientez un instant ...</span></div>
+  <div class="text-center" *ngIf="error!=''"><mat-error>{{error}}</mat-error></div>
+  <hr *ngIf="isEmptyFolders && isEmptyFiles">
+  <div class="text-center" *ngIf="isEmptyFolders && isEmptyFiles"><span>Repertoire vide</span></div>
   <div class="m-2">
     <div class="card-deck">
-      <div class=" ml-4" *ngFor="let folder of files[0]">
-        <a routerLink="/files/{{folder.key}}"><mat-icon style="font-size: 40px">folder</mat-icon></a>
+      <div class=" ml-4" style="max-width: 70px" *ngFor="let folder of folders">
+        <a href="javascript:void(0)" (click)="openFolder(folder)"><mat-icon style="font-size: 40px">folder</mat-icon></a>
         <button class="float-right" mat-icon-button [matMenuTriggerFor]="menu"><mat-icon>more_vert</mat-icon></button>
         <mat-menu #menu="matMenu">
           <button mat-menu-item (click)="openDialog(folder)">Renommer</button>
           <button mat-menu-item (click)="onDeleteFile(folder, 'folder')">Supprimer</button>
           <button mat-menu-item (click)="onShare(folder)">Partager</button>
         </mat-menu>
-        <p style="font-size: 14px"><a routerLink="/files/{{folder.key}}">{{folder.name}}</a></p>
+        <p style="font-size: 14px; overflow-wrap: break-word">{{folder.name}}</p>
       </div>
-      <div class="ml-4" *ngFor="let file of files[1]">
-        <a routerLink="{{file.link}}"><mat-icon style="font-size: 40px" color="primary">image</mat-icon></a>
+      <div class="ml-4" style="max-width: 80px" *ngFor="let file of files">
+        <a href="javascript:void(0)" (click)="downloadFile(file.link)" *ngIf="file.extension.toLowerCase() != 'jpg' && file.extension.toLowerCase() != 'png'  && file.extension.toLowerCase() != 'jpeg' ">
+          <mat-icon style="font-size: 40px" color="primary">insert_drive_file</mat-icon>
+        </a>
+        <a href="javascript:void(0)" (click)="downloadFile(file.link)"  class="fileLink" download="download" *ngIf="file.extension.toLowerCase() == 'jpg' || file.extension.toLowerCase() == 'png' || file.extension.toLowerCase() == 'jpeg' ">
+          <img *ngIf="file.thumbnail" [src]="file.thumbnail" alt="img">
+          <mat-icon style="font-size: 40px" *ngIf="!file.thumbnail" color="primary">image</mat-icon>
+        </a>
         <button class="float-right" mat-icon-button [matMenuTriggerFor]="menu"><mat-icon>more_vert</mat-icon></button>
         <mat-menu #menu="matMenu">
           <button mat-menu-item (click)="openDialog(file)">Renommer</button>
           <button mat-menu-item (click)="onDeleteFile(file, 'file')">Supprimer</button>
           <button mat-menu-item (click)="onShare(file)">Partager</button>
         </mat-menu>
-        <p style="font-size: 14px">{{file.name}}</p>
+        <p style="font-size: 14px; overflow-wrap: break-word">{{file.name}}</p>
       </div>
     </div>
   </div>

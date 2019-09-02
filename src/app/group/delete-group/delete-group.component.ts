@@ -29,7 +29,7 @@ export class DeleteGroupComponent implements OnInit {
                   this.dialogRef.close({status: Constant.DELETE_FAILED, mes: data.mes});
               }
           },
-          (error) => { this.dialogRef.close(Constant.MESSAGE_OK);} );
+          (error) => { this.dialogRef.close(Constant.MESSAGE_OK); } );
   }
 
   ngOnInit() {
