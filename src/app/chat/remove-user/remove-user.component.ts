@@ -20,9 +20,17 @@ export class RemoveUserComponent implements OnInit {
         this.dialogRef.close(Constant.MESSAGE_BAD);
     }
     onRemoveUser(): void {
-        this.groupService.removeMember(this.data.user.key, this.data.groupKey).subscribe(
-            () => {this.dialogRef.close(Constant.MESSAGE_OK); console.log('Membre retiré'); },
-            () => { this.dialogRef.close(Constant.MESSAGE_OK); console.log('Une erreur est survenue'); } );
+        this.groupService.removeMember(this.data.user.keyy, this.data.groupKey).subscribe(
+            (data) => {
+                    if (data.status === 0) {
+                        this.dialogRef.close({status: Constant.DELETE_SUCCESS, mes: data.mes});
+                    } else {
+                        this.dialogRef.close({status: Constant.DELETE_FAILED, mes: data.mes});
+                    }
+                },
+            () => {
+                this.dialogRef.close({status: Constant.DELETE_FAILED, mes: 'Une erreur est survenue'});
+            } );
     }
     ngOnInit() {
     }

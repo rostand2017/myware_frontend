@@ -19,6 +19,12 @@ export class GroupService {
   getGroups(): Observable<Group[]> {
       return this.http.get<Group[]>(Constant.BASE_URL + 'group/all');
   }
+  getMembers(groupKey: String): Observable<any> {
+    return this.http.post<any>(Constant.BASE_URL + 'group/members', {keyy: groupKey}, this.httpOptions);
+  }
+  getOtherMembers(groupKey: String): Observable<any> {
+    return this.http.post<any>(Constant.BASE_URL + 'group/othermembers', {keyy: groupKey}, this.httpOptions);
+  }
 
   otherGroupProject(key: String): Observable<Group[]> {
       return this.http.post<Group[]>(Constant.BASE_URL + 'project/othergroup', {keyy: key}, this.httpOptions);
@@ -30,25 +36,15 @@ export class GroupService {
       );
   }
   addMember(users: any, groupKey: String): Observable<any> {
-      return this.http.post<any>(this.groupUrl, {users: users, groupKey: groupKey}, this.httpOptions).pipe(
-          tap( (_message: any) => this.log(`member added`)),
-          catchError(this.handleError<any>('error'))
-      );
+      return this.http.post<any>(Constant.BASE_URL + 'group/addMember',
+          {users: users, keyy: groupKey}, this.httpOptions);
+  }
+  removeMember(userKey: String, groupKey: String): Observable<any> {
+    return this.http.post<any>(Constant.BASE_URL + 'group/removeMember',
+        {groupKey: groupKey, keyy: userKey}, this.httpOptions);
   }
   delete(groupKey: String): Observable<any> {
-      return this.http.post<any>('', {key: groupKey}, this.httpOptions).pipe(
-          tap(_ => this.log(`group deleted`)),
-          catchError(this.handleError<any>('error'))
-      );
-  }
-  removeMember(userKey: String, groupKey: String): Observable<Group> {
-      const httpOptions = {
-          headers: new HttpHeaders({ 'Content-Type': 'application/json' })
-      };
-      return this.http.delete<any>('', httpOptions).pipe(
-          tap(_ => this.log(`group deleted`)),
-          catchError(this.handleError<any>('error'))
-      );
+      return this.http.post<any>('', {key: groupKey}, this.httpOptions);
   }
 
   private handleError<T> (operation = 'operation', result?: T) {

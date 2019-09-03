@@ -1,12 +1,12 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
-import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {FormArray, FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {UserFormComponent} from '../../user/user-form/user-form.component';
-import {Project} from '../../model/project';
 import {ProjectService} from '../../services/project.service';
 import {User} from '../../model/user';
 import {UserService} from '../../services/user.service';
 import {GroupService} from '../../services/group.service';
+import {Constant} from '../../model/constant';
 
 @Component({
   selector: 'app-add-user',
@@ -15,6 +15,9 @@ import {GroupService} from '../../services/group.service';
 })
 export class AddUserComponent implements OnInit {
     submitted = false;
+    submitting = false;
+    isEmpty = false;
+    loadEnd = false;
     error = '';
     users: User[];
     groupKey: String;
@@ -31,7 +34,19 @@ export class AddUserComponent implements OnInit {
         this.initForm();
     }
     getUsers() {
-        this.users = this.userService.getNotMember(this.groupKey);
+        this.groupService.getOtherMembers(this.groupKey).subscribe(
+            (users) => {
+                if (users.length === 0) {
+                    this.isEmpty = true;
+                }
+                this.loadEnd = true;
+                this.users = users;
+            },
+            error => {
+                this.error = 'Une erreur est survenue';
+                this.loadEnd = true;
+            }
+        );
     }
     initForm() {
         this.addUserForm = this.formBuilder.group(
@@ -47,8 +62,14 @@ export class AddUserComponent implements OnInit {
             return;
         }
         const formValue = this.addUserForm.value;
-        this.groupService.addMember(formValue, this.groupKey).subscribe( (message: any) => {} /* this.user = user*/,
-            () => { console.log('Une erreur est survenue'); this.error = 'Une erreur'; }
+        this.groupService.addMember(formValue.users, this.groupKey).subscribe( (data) => {
+                if (data.status === 0) {
+                    this.dialogRef.close({status: Constant.ADD_SUCCESS, mes: data.mes, users: data.users});
+                } else {
+                    this.dialogRef.close({status: Constant.ADD_FAILED, mes: data.mes});
+                }
+            },
+            () => this.error = 'Une erreur est survenue'
         );
         console.log(formValue);
     }

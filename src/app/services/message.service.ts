@@ -6,6 +6,7 @@ import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Message} from '../model/message';
 import {ReceiveMessage} from '../model/receive-message';
 import {File} from '../model/file';
+import {Constant} from '../model/constant';
 
 @Injectable({
   providedIn: 'root'
@@ -41,8 +42,9 @@ export class MessageService {
             catchError(this.handleError<any>('error'))
         );*/
     }
-    loadImage(imageUrl): Observable<any> {
-        return this.http.get<any>(imageUrl);
+
+    getDiscussionType(discussionKey: String): Observable<any> {
+        return this.http.post<any>(Constant.BASE_URL + 'discussionType', {keyy: discussionKey}, this.httpOptions);
     }
     sendMessage(message: Message, senderKey: String, discussionKey: String): Observable<ReceiveMessage> {
         return this.http.post<any>(this.messageUrl, {message: message, senderKey: senderKey, discussionKey: discussionKey},

@@ -7,6 +7,7 @@ import {DeleteGroupComponent} from './delete-group/delete-group.component';
 import {Router} from '@angular/router';
 import {User} from '../model/user';
 import {Constant} from '../model/constant';
+import {MessageService} from '../services/message.service';
 
 @Component({
   selector: 'app-group',

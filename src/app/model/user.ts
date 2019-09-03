@@ -1,3 +1,5 @@
+import {SafeUrl} from '@angular/platform-browser';
+
 export class User {
     private _keyy: String = '';
     private _name: String = '';
@@ -8,6 +10,7 @@ export class User {
     private _fonction: String = '';
     private _type: String = '';
     private _image: String = '';
+    private _imageUrl: SafeUrl;
 
     constructor(keyy: String, name: String, subname: String, email: String, password: String,
                 tel: String, fonction: String, type: String, image: String) {
@@ -92,5 +95,13 @@ export class User {
 
     set image(value: String) {
         this._image = value;
+    }
+
+    get imageUrl(): SafeUrl {
+        return this._imageUrl;
+    }
+
+    set imageUrl(value: SafeUrl) {
+        this._imageUrl = value;
     }
 }

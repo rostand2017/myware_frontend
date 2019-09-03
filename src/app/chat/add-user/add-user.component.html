@@ -2,10 +2,12 @@
   <div class="col-md-12 table-responsive">
     <form class="example-container" [formGroup]="addUserForm" (ngSubmit)="onSubmitForm()">
       <h6>Ajoutez de nouveaux membres</h6>
+      <mat-progress-bar mode="indeterminate" *ngIf="!loadEnd"></mat-progress-bar>
       <br>
+      <div class="text-center" *ngIf="isEmpty"><span>Aucun utilisateur trouvé</span></div>
       <mat-error *ngIf="error!=''">{{error}}</mat-error>
       <div class="form-group" *ngFor="let user of users; let i=index">
-        <mat-checkbox color="primary" [value]="user.key" (change)="onCheckChange($event)">{{user.subname}} {{user.name}} </mat-checkbox>
+        <mat-checkbox color="primary" [value]="user.keyy" (change)="onCheckChange($event)">{{user.subname}} {{user.name}} </mat-checkbox>
       </div>
       <div class="text-center">
         <button mat-button color="primary" type="submit">Ajouter<mat-icon>check</mat-icon></button>

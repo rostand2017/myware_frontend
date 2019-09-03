@@ -231,6 +231,9 @@ export class FilesComponent implements OnInit {
                     this.snackBar.open(value.mes, 'ok', {
                         duration: 2000,
                     });
+                    if (value.status === 1 ) {
+                        return;
+                    }
                     for (let i = 0; i < value.files.length; i++) {
                         this.files.push(value.files[i]);
                     }

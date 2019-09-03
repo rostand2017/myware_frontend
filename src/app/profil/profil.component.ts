@@ -1,8 +1,10 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {User} from '../model/user';
 import {UserService} from '../services/user.service';
-import {MatDialog} from '@angular/material';
+import {MatDialog, MatSnackBar} from '@angular/material';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {DomSanitizer} from '@angular/platform-browser';
+import {FileService} from '../services/file.service';
 
 @Component({
   selector: 'app-profil',
@@ -16,8 +18,10 @@ export class ProfilComponent implements OnInit {
   submitting = false;
   error = '';
   success = '';
+  loadEnd = false;
 
-  constructor(private userService: UserService, private formBuilder: FormBuilder) { }
+  constructor(private userService: UserService, private formBuilder: FormBuilder,
+              private snackBar: MatSnackBar, private sanitizer: DomSanitizer, private fileService: FileService) { }
 
   ngOnInit() {
       this.initForm();
@@ -27,8 +31,21 @@ export class ProfilComponent implements OnInit {
     this.userService.getCurrentUser().subscribe( user => {
             this.user = user;
             this.initForm();
+            this.loadEnd = true;
+            if (!user.image) {
+                return;
+            }
+            this.fileService.downloadThumbnail(user.image).subscribe(
+                value => {
+                    this.user.imageUrl = this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(value));
+                }
+            );
         },
-        (error) => { console.log('Une erreur est survenue'); } );
+        (error) => {
+            this.error = 'Une erreur est survenue';
+            this.loadEnd = true;
+        }
+    );
   }
   initForm() {
       this.userForm = this.formBuilder.group(
@@ -67,4 +84,33 @@ export class ProfilComponent implements OnInit {
       );
       console.log(formValue);
   }
+
+  onFileInput(event) {
+    if (event.target.files && event.target.files.length > 0) {
+        this.loadEnd = false;
+        const files = event.target.files;
+        const data: FormData = new FormData();
+        data.append('photo', files[0], files[0].name);
+        this.userService.uploadPhoto(data).subscribe(
+            value => {
+                this.snackBar.open(value.mes, 'ok', {
+                    duration: 2000,
+                });
+                if (value.status === 0) {
+                    this.user.imageUrl = this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(files[0]));
+                }
+            },
+            error => {
+                this.snackBar.open('Une erreur est survenue', 'ok', {
+                    duration: 2000,
+                });
+                this.loadEnd = true;
+            },
+            () => {
+                this.loadEnd = true;
+            }
+        );
+    }
+  }
+
 }

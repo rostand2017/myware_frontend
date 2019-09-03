@@ -1,5 +1,5 @@
 <div class="row">
-  <mat-progress-bar mode="indeterminate" color="warn" *ngIf="submitting"></mat-progress-bar>
+  <mat-progress-bar mode="indeterminate" color="warn" *ngIf="submitting || !loadEnd"></mat-progress-bar>
   <div class="col-md-8">
       <div>
         <form [formGroup]="userForm" (ngSubmit)="onSubmitForm()" style="margin: 20px">
@@ -72,7 +72,24 @@
     </div>
 
     <div class="col-md-4">
-      <img src="" alt="Photo">
+      <div>
+        <div *ngIf="!user.imageUrl">
+          <a href="javascript:void(0);" title="cliquez dessus pour ajouter une photo de profil" [matMenuTriggerFor]="menu" style="color: #636363">
+            <mat-icon style="font-size: 70px">account_circle</mat-icon>
+          </a>
+        </div>
+        <div [matMenuTriggerFor]="menu" *ngIf="user.imageUrl" style="width: 70px;height: 70px; border-radius: 70px;overflow: hidden;">
+          <img [src]="user.imageUrl" alt="Votre photo" style="max-height: 70px">
+        </div>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item (click)="fileInput.click()">
+            <span *ngIf="user.image">Changer votre photo de profil</span>
+            <span *ngIf="!user.image">Ajouter une photo de profil</span>
+          </button>
+        </mat-menu>
+        <input #fileInput type="file" (change)="onFileInput($event)" style="display:none;" />
+      </div>
+
       <h2>{{user.subname}} {{user.name}}</h2>
       <mat-chip-list>
         <mat-chip class="bg-success text-light">{{user.fonction}}</mat-chip>
