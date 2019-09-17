@@ -1,5 +1,5 @@
 <div class="row" style="height: 100%">
-  <div [class]="discussionObject.description? 'col-md-8' : 'col-md-12'" style="height: 100%">
+  <div class="col-md-8" style="height: 100%">
     <div #container style="height: 100%">
       <div class="shadow-sm p-2" style="height: 10%;">
         <h4>
@@ -7,66 +7,115 @@
           <span *ngIf="discussionObject.subname">{{discussionObject.subname}} {{discussionObject.name}}</span>
           <span *ngIf="discussionObject.description">{{discussionObject.name}}</span>
           <button class="float-right" mat-icon-button><mat-icon>videocam</mat-icon></button>
-         </h4>
+        </h4>
         <mat-progress-bar mode="indeterminate" *ngIf="!loadEndMessage" ></mat-progress-bar>
       </div>
-      <div id="sendMessageContainer" #sendMessageContainer (scroll)="getMoreMessages($event, sendMessageContainer)" style="height: 70%; overflow-y: scroll" class="pt-2">
+      <div id="sendMessageContainer" #sendMessageContainer (scroll)="getMoreMessages($event)" style="height: 70%; overflow-y: scroll; overflow-x: " class="pt-2">
+          <div class="text-center"><mat-error>{{errorMessage}}</mat-error></div>
+          <div class="text-center" *ngIf="errorLoadMessage != ''"><a href="javascript:void(0);" (click)="getMoreMessages($event)"><mat-error>{{errorLoadMessage}}</mat-error></a></div>
+          <div class="text-center" *ngIf="!loadEndMessage">Chargement des messages ...</div>
+          <div class="text-center" *ngIf="isEmptyMessage">Aucun message, soyez le premier à commencer la discussion</div>
           <div *ngFor="let message of messages; let i = index">
-            <div class="text-center" *ngIf="i==0 || messages[i-1].date != message.date">
+            <!-- DATE -->
+            <div class="text-center" *ngIf="message.dateToShow && (i==0 || messages[i-1].dateToShow.toLocaleDateString() != message.dateToShow.toLocaleDateString())">
               <span style="background: #b1afb7" class="shadow-sm p-1 text-light rounded">
-                <small>{{message.date}}</small>
+                <small *ngIf="todayDate.toLocaleDateString() == message.dateToShow.toLocaleDateString()">Aujourd'hui</small>
+                <small *ngIf="todayDate.getDate() - 1 == message.dateToShow.getDate()">Hier</small>
+                <small *ngIf="todayDate.toLocaleDateString() != message.dateToShow.toLocaleDateString() && todayDate.getDate() - 1 != message.dateToShow.getDate()">{{message.dateToShow.toLocaleDateString()}}</small>
               </span>
             </div>
-            <div class="text-right m-2" *ngIf="message.senderKey == currentUser.keyy && message.type == 'message'">
-              <span style="background: #673ab7" class="shadow-sm text-light p-2 rounded">
+
+            <!-- MESSAGE -->
+            <div [class]="message.senderKey == currentUser.keyy? 'text-right m-2' : 'text-left m-2'" *ngIf="message.type == 'message'">
+              <button *ngIf="message.senderKey != currentUser.keyy" mat-button color="primary"><mat-icon>account_circle</mat-icon>{{message.senderSubname}} {{message.senderName}}</button>
+              <br *ngIf="message.senderKey != currentUser.keyy">
+              <div style="display: inline-block" class="mr-1" *ngIf="!message.sent">
+                <mat-error>
+                  <a href="javascript:void(0);" class="text-danger" (click)="resendMessage(message)">
+                    <mat-icon>error</mat-icon> réessayer
+                  </a>
+                </mat-error>
+              </div>
+              <div style="display: inline-block; max-width: 50%; overflow-wrap: break-word" [ngStyle]="{'background' : message.senderKey == currentUser.keyy ? '#673ab7' : ''}"
+                   [class]="message.senderKey == currentUser.keyy? 'text-light shadow-sm p-2 rounded' : 'shadow-sm p-2 rounded'">
                 {{message.message}} <!-- <small><mat-icon>access_time</mat-icon></small> -->
-              </span>
+              </div>
+              <br>
+              <small>{{message.hour}}</small>
+            </div>
+
+            <!-- FILE -->
+            <div [class]="message.senderKey != currentUser.keyy? 'text-left m-2' : 'text-right m-2'" *ngIf="message.type == 'file'">
+              <button *ngIf="message.senderKey != currentUser.keyy" mat-button color="primary"><mat-icon>account_circle</mat-icon>{{message.senderSubname}} {{message.senderName}}</button>
+              <br *ngIf="message.senderKey != currentUser.keyy">
+              <div style="display: inline-block" class="mr-1" *ngIf="!message.sent">
+                <mat-error>
+                  <a href="javascript:void(0);" class="text-danger" (click)="onResendFile(message)">
+                    <mat-icon>error</mat-icon> réessayer
+                  </a>
+                </mat-error>
+              </div>
+              <a href="javascript:void(0)" (click)="downloadFile(message.link)">
+                <mat-icon style="font-size: 100px" color="primary">insert_drive_file</mat-icon>
                 <br>
+                <span>{{message.message}}</span>
+              </a>
+              <br>
               <small>{{message.hour}}</small>
             </div>
 
-            <div class="text-left m-2" *ngIf="message.senderKey != currentUser.keyy && message.type == 'message'">
-              <button mat-button color="primary"><mat-icon>account_circle</mat-icon>{{message.senderSubname}} {{message.senderName}}</button>
+            <!-- IMAGE -->
+            <div [class]="message.senderKey != currentUser.keyy? 'text-left m-2' : 'text-right m-2'" *ngIf="message.type == 'image'">
+              <button *ngIf="message.senderKey != currentUser.keyy" mat-button color="primary"><mat-icon>account_circle</mat-icon>{{message.senderName}}</button>
+              <br *ngIf="message.senderKey != currentUser.keyy">
+              <a href="javascript:void(0)" (click)="downloadFile(message.link)" download="download">
+                <img *ngIf="message.thumbnail" [src]="message.thumbnail" alt="chargement..." class="" style="max-width: 100px">
+                <mat-icon style="font-size: 100px" *ngIf="!message.thumbnail" color="primary">image</mat-icon>
+              </a>
               <br>
-              <span class="shadow-sm p-2 rounded">
-                {{message.message}}
+              <small>{{message.hour}}</small>
+            </div>
+
+            <!-- REMOVE USER -->
+            <div class="text-center m-3" *ngIf="message.type == 'remove_user' ">
+              <span style="background: #e83246" class="shadow-sm p-1 text-light rounded">
+                <small><i>{{message.message}}</i></small>
               </span>
-              <br>
-              <small>{{message.hour}}</small>
             </div>
 
-            <div class="text-left" *ngIf="message.senderKey != currentUser.keyy && message.type == 'file'">
-              <button mat-button color="primary"><mat-icon>account_circle</mat-icon>{{message.senderSubname}} {{message.senderName}}</button>
-              <br>
-              <a href="{{message.link}}" class=""><mat-icon>insert_drive_file</mat-icon> fichier.ext</a>
-              <br>
-              <small>{{message.hour}}</small>
+            <!-- PROJECT INFO -->
+            <div class="text-center m-3" *ngIf="message.type == 'project' ">
+              <span class="shadow-sm p-1 bg-info rounded">
+                <small><i><a class="text-light" routerLink="/project/{{message.link}}">{{message.message}}</a></i></small>
+              </span>
             </div>
 
-            <div class="text-right" *ngIf="message.senderKey == currentUser.keyy && message.type == 'file'">
-              <a href="{{message.link}}" class=""><mat-icon>insert_drive_file</mat-icon>{{message.message}} {{message.senderName}}</a>
-              <br>
-              <small>{{message.hour}}</small>
+            <!-- REMOVE PROJECT INFO -->
+            <div class="text-center m-3" *ngIf="message.type == 'remove_project' ">
+              <span style="background: #e83246" class="text-light shadow-sm p-1 rounded">
+                <small><i>{{message.message}}</i></small>
+              </span>
             </div>
 
-            <div class="text-right" *ngIf="message.senderKey == currentUser.keyy && message.type == 'image'">
-              <img src="{{message.link}}" alt="chargement..." class="" style="max-width: 40%">
-              <br>
-              <small>{{message.hour}}</small>
+            <!-- SHARE FOLDER -->
+            <div class="text-center m-3" *ngIf="message.type == 'share_folder' ">
+              <span class="shadow-sm p-1 bg-info rounded">
+                <small><i><a class="text-light" routerLink="/files/{{message.link}}">{{message.message}}</a></i></small>
+              </span>
             </div>
-            <div class="text-left" *ngIf="message.senderKey != currentUser.keyy && message.type == 'image'">
-              <button mat-button color="primary"><mat-icon>account_circle</mat-icon>{{message.senderName}}</button>
-              <br>
-              <img src="{{message.link}}" alt="chargement..." class="" style="max-width: 40%">
-              <br>
-              <small>{{message.hour}}</small>
+
+            <!-- SHARE FILE -->
+            <div class="text-center m-3" *ngIf="message.type == 'share_file' ">
+              <span class="shadow-sm p-1 bg-info rounded">
+                <small><i><a class="text-light" href="javascript:void(0)" (click)="downloadFile(message.link)">{{message.message}}</a></i></small>
+              </span>
             </div>
           </div>
       </div>
       <div style="height: 20%" class="input-group">
         <!-- <textarea class="form-control mr-2 ml-2 message-input" style="height: 40%" rows="1" #inputMessage placeholder="Ecrivez un message"></textarea> -->
-        <input class="form-control mr-2 ml-2 message-input" #inputMessage type="text" placeholder="Ecrivez un message">
-        <button class="" mat-icon-button style="background: #673ab7; color: white;" (click)="onSendMessage(inputMessage)"><mat-icon>arrow_forward_ios</mat-icon></button>
+        <input class="form-control mr-2 ml-2 message-input" (keypress)="onEnterSendMessage($event, inputMessage)" #inputMessage type="text" placeholder="Ecrivez un message">
+        <button class="" mat-icon-button style="background: #673ab7; color: white;" #sendBtn (click)="onSendMessage(inputMessage)"><mat-icon>arrow_forward_ios</mat-icon></button>
         <button class="float-right" mat-icon-button [matMenuTriggerFor]="menu"><mat-icon>attach_file</mat-icon></button>
         <mat-menu #menu="matMenu">
           <button mat-menu-item (click)="fileInput.click()">
@@ -78,9 +127,9 @@
     </div>
   </div>
 
-  <div class="col-md-4" style="height: 100%" *ngIf="discussionObject.description">
+  <div class="col-md-4" style="height: 100%">
     <table class="table-responsive table" style="background: #e8e8e8; height: 80%">
-      <tr>
+      <tr *ngIf="currentUser && currentUser.type == 'Admin'">
         <td><button mat-button (click)="onAddMember()">+ Ajouter des nouveaux membres</button></td>
       </tr>
       <tr *ngIf="!loadEndUser">
@@ -93,7 +142,7 @@
             <button mat-button color="primary">
               <mat-icon>account_circle</mat-icon> {{user.subname}} {{user.name}}
             </button>
-            <button class="float-right" mat-icon-button [matMenuTriggerFor]="menu"><mat-icon>more_vert</mat-icon></button>
+            <button *ngIf="currentUser && currentUser.type == 'Admin'" class="float-right" mat-icon-button [matMenuTriggerFor]="menu"><mat-icon>more_vert</mat-icon></button>
             <mat-menu #menu="matMenu">
               <button mat-menu-item (click)="onRemove(user)">Retirer du groupe</button>
             </mat-menu>

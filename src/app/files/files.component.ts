@@ -33,8 +33,7 @@ export class FilesComponent implements OnInit {
     loadEndFiles = false;
     loadEndFolders = false;
     loadEndUpload = true;
-    baseUrl = Constant.BASE_URL;
-        constructor(public dialog: MatDialog, private fileService: FileService, private router: ActivatedRoute,
+    constructor(public dialog: MatDialog, private fileService: FileService, private router: ActivatedRoute,
                 private location: Location, private snackBar: MatSnackBar, private sanitizer: DomSanitizer) {
         this.folderKey = this.router.snapshot.paramMap.get('folderKey');
     }
@@ -61,7 +60,6 @@ export class FilesComponent implements OnInit {
                             },
                             error2 => {
                                 console.log('error2: ');
-                                console.log(error2);
                             }
                         );
                     }
@@ -258,7 +256,7 @@ export class FilesComponent implements OnInit {
         this.fileService.downloadFile(link).subscribe(
             value => {
                 window.open(URL.createObjectURL(value));
-                console.log('donwload end');
+                console.log('download end');
             },
             error2 => {
                 console.log('error2: ');

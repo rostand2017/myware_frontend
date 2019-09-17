@@ -8,6 +8,7 @@ import {Router} from '@angular/router';
 import {User} from '../model/user';
 import {Constant} from '../model/constant';
 import {MessageService} from '../services/message.service';
+import {UserService} from '../services/user.service';
 
 @Component({
   selector: 'app-group',
@@ -21,11 +22,14 @@ export class GroupComponent implements OnInit {
   error = '';
   isEmpty = false;
   loadEnd = false;
+  user: User;
 
     constructor(public dialog: MatDialog, private groupService: GroupService,
-              private router: Router, private snackBar: MatSnackBar) { }
+              private router: Router, private snackBar: MatSnackBar, private userService: UserService) {
+    }
 
     ngOnInit() {
+      this.user = this.userService.user;
       this.getGroups();
     }
     getGroups() {

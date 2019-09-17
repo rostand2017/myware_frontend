@@ -24,6 +24,7 @@ export class UserComponent implements OnInit {
   ngOnInit() {
     this.getUsers();
   }
+
   getUsers() {
     this.userService.getActiveUsers().subscribe(
         (users) => {
@@ -39,11 +40,15 @@ export class UserComponent implements OnInit {
         }
     );
   }
+
   openDialog() {
     const dialogRef = this.dialog.open(UserFormComponent, {
         data: {user: this.user}
     });
     dialogRef.afterClosed().subscribe(result => {
+          if (!result) {
+            return;
+          }
           switch (result.status) {
               case Constant.ADD_SUCCESS:
                   this.snackBar.open(result.mes, 'ok', {
@@ -60,11 +65,15 @@ export class UserComponent implements OnInit {
           console.log('The dialog was closed');
       });
   }
+
   onEdit(user: User) {
     const dialogRef = this.dialog.open(UserFormComponent, {
         data: user
     });
     dialogRef.afterClosed().subscribe(result => {
+          if (!result) {
+              return;
+          }
           switch (result.status) {
               case Constant.MODIFY_SUCCESS:
                   this.snackBar.open(result.mes, 'ok', {
@@ -86,11 +95,15 @@ export class UserComponent implements OnInit {
           console.log('The dialog was closed');
       });
   }
+
   onDelete(user: User) {
     const dialogRef = this.dialog.open(DeleteUserComponent, {
         data: user
     });
     dialogRef.afterClosed().subscribe(result => {
+          if (!result) {
+            return;
+          }
           switch (result.status) {
               case Constant.DELETE_SUCCESS:
                   this.snackBar.open(result.mes, 'ok', {

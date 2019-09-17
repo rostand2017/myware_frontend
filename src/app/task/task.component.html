@@ -9,7 +9,7 @@
   <div class="text-center" *ngIf="!loadEnd"><span>Patientez un instant ...</span></div>
   <div class="text-center" *ngIf="error!=''"><mat-error>{{error}}</mat-error></div>
   <div class="card-deck">
-    <mat-card role="region" style="display: inline-block" class="m-2">
+    <mat-card role="region" style="display: inline-block" class="m-2" *ngIf="user.type == 'Admin'">
       <mat-card-title>
         <button mat-button>
           <button class="text-light" mat-icon-button style="background: #673ab7;"><mat-icon>list_alt</mat-icon></button>
@@ -37,7 +37,7 @@
           <button class="text-light" mat-icon-button style="background: #673ab7;"><mat-icon>list_alt</mat-icon></button>
           Liste {{i+1}}: {{ list.name }}
         </button>
-        <button class="float-right" mat-icon-button [matMenuTriggerFor]="menu"><mat-icon>more_vert</mat-icon></button>
+        <button *ngIf="user.type == 'Admin'" class="float-right" mat-icon-button [matMenuTriggerFor]="menu"><mat-icon>more_vert</mat-icon></button>
         <mat-menu #menu="matMenu">
           <button mat-menu-item (click)="onDeleteList(list)">Supprimer</button>
           <button mat-menu-item (click)="openDialog(list)">Ajouter une tâche</button>
@@ -50,7 +50,7 @@
             <mat-icon *ngIf="task.isCompleted" color="primary" matListIcon>check</mat-icon>
           </mat-list-item>
         </mat-list>
-        <div class="form-group">
+        <div class="form-group" *ngIf="user.type == 'Admin'">
           <mat-form-field>
             <input matInput type="text" [(ngModel)]="list.name" (click)="onSelectedList(list)" placeholder="Renommer la liste">
             <mat-label>Renommer la liste</mat-label>

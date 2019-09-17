@@ -25,14 +25,16 @@
       <mat-chip-list>
         <mat-chip *ngFor="let user of data.task.users" (click)="onRemoveUserTask(user, data.task)">{{user.name}}</mat-chip>
       </mat-chip-list>
-      <h5 class="text-center">Ajoutez des intervenants</h5>
-      <div class="text-center" *ngIf="!loadEnd"><span>Patientez un instant ...</span></div>
-      <div class="text-center" *ngIf="isEmpty"><span>Aucun intervenant trouvé</span></div>
-      <div class="form-group" *ngFor="let user of users; let i=index">
-        <mat-checkbox color="primary" [disabled]="submitting" [value]="user.keyy" (change)="onCheckChange($event)">{{user.name}} </mat-checkbox>
+      <div *ngIf="user.type == 'Admin'">
+        <h5 class="text-center">Ajoutez des intervenants</h5>
+        <div class="text-center" *ngIf="!loadEnd"><span>Patientez un instant ...</span></div>
+        <div class="text-center" *ngIf="isEmpty"><span>Aucun intervenant trouvé</span></div>
+        <div class="form-group" *ngFor="let user of users; let i=index">
+          <mat-checkbox color="primary" [disabled]="submitting" [value]="user.keyy" (change)="onCheckChange($event)">{{user.name}} </mat-checkbox>
+        </div>
       </div>
 
-      <div class="text-center">
+      <div class="text-center" *ngIf="user.type == 'Admin'">
         <button mat-button color="primary" type="submit">Enregistrer<mat-icon>check_circle</mat-icon></button>
         <button mat-button class="text-danger" *ngIf="data.task.keyy == ''" (click)="onCancel()" type="button">Annuler <mat-icon>cancel</mat-icon></button>
         <button mat-button class="text-danger" *ngIf="data.task.keyy != ''" (click)="onCancelTask(data.task)" type="button">Annuler la tâche<mat-icon>cancel</mat-icon></button>

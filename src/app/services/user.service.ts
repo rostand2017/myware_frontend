@@ -12,6 +12,7 @@ import {Form} from '@angular/forms';
 })
 export class UserService {
     private heroesUrl = 'api/user';
+    public user: User;
     httpOptions = {
         headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
     };
@@ -21,7 +22,7 @@ export class UserService {
       return this.http.get<User>(Constant.BASE_URL + 'user/me', {withCredentials: true}).pipe(
           map(
               (user) => {
-                  console.log('val: ' + user.keyy + !user.keyy);
+                  this.user = user;
                   return !!user.keyy;
               }
           )

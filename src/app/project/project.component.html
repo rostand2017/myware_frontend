@@ -3,7 +3,7 @@
     <div class="col-md-12">
       <h4>
         Projets
-        <button (click)="openDialog()" class="text-light text-center float-right clearfix" style="background: #673ab7;" mat-icon-button>+</button>
+        <button *ngIf="user.type == 'Admin'" (click)="openDialog()" class="text-light text-center float-right clearfix" style="background: #673ab7;" mat-icon-button>+</button>
       </h4>
     </div>
   </div>
@@ -15,7 +15,7 @@
     <mat-card role="group" style="display: inline-block;" class="m-2" *ngFor="let project of projects; let i = index" tabindex="{{i}}">
       <mat-card-title>
         <a routerLink="/project/{{project.keyy}}">{{project.name}}</a>
-        <button class="float-right" mat-icon-button [matMenuTriggerFor]="menu"><mat-icon>more_vert</mat-icon></button>
+        <button *ngIf="user.type == 'Admin'" class="float-right" mat-icon-button [matMenuTriggerFor]="menu"><mat-icon>more_vert</mat-icon></button>
         <mat-menu #menu="matMenu">
           <button mat-menu-item (click)="onEdit(project)">Modifier</button>
           <button mat-menu-item (click)="onDelete(project)">Supprimer</button>

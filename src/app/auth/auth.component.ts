@@ -28,10 +28,9 @@ export class AuthComponent implements OnInit {
       const value = this.userForm.value;
       this.userService.login(value.email, value.password).subscribe(
           (data) => {
-            if (data.status === 1) {
+            if (data.status === 0) {
                 localStorage.setItem('token', data.token);
                 this.router.navigate(['groups']);
-                console.log('Connexion réussie');
             } else {
               this.error = data.mes;
             }

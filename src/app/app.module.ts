@@ -51,6 +51,7 @@ import { AddUserComponent } from './chat/add-user/add-user.component';
 import { RemoveUserComponent } from './chat/remove-user/remove-user.component';
 import {TokenInterceptorService} from './services/token-interceptor.service';
 import { DeleteGroupProjectComponent } from './project/delete-group-project/delete-group-project.component';
+import {SocketIoModule} from 'ngx-socket-io';
 
 @NgModule({
   declarations: [
@@ -130,6 +131,7 @@ import { DeleteGroupProjectComponent } from './project/delete-group-project/dele
     MatSnackBarModule,
     ReactiveFormsModule,
     FormsModule,
+    SocketIoModule.forRoot({ url: 'http://localhost:8080', options: {} }),
   ],
   providers: [
       UserService,

@@ -6,6 +6,7 @@ import {Constant} from '../../model/constant';
 import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {User} from '../../model/user';
 import {DeleteTaskComponent} from '../delete-task/delete-task.component';
+import {UserService} from '../../services/user.service';
 
 @Component({
   selector: 'app-task-form',
@@ -22,17 +23,23 @@ export class TaskFormComponent implements OnInit {
     isEmpty = false;
     loadEnd = false;
     submitting = false;
+    user: User;
 
     constructor(public dialog: MatDialog, public dialogRef: MatDialogRef<TaskFormComponent>, @Inject(MAT_DIALOG_DATA) public _data: any,
-                 private taskService: TaskService, private formBuilder: FormBuilder) {
+                 private taskService: TaskService, private formBuilder: FormBuilder, private userService: UserService) {
         this.data = _data;
     }
 
     ngOnInit() {
+        this.user = this.userService.user;
         this.getUsers();
         this.initForm();
     }
     getUsers() {
+        if (this.user.type !== 'Admin') {
+            this.loadEnd = true;
+            return;
+        }
         if (this.data.task.keyy === '') {
             console.log('project: ' + this.data.projectKey);
             this.taskService.getProjectUsers(this.data.projectKey).subscribe(
@@ -65,6 +72,7 @@ export class TaskFormComponent implements OnInit {
             );
         }
     }
+
     initForm() {
         this.taskForm = this.formBuilder.group(
             {
@@ -75,6 +83,7 @@ export class TaskFormComponent implements OnInit {
             }
         );
     }
+
     onSubmitForm() {
         this.submitted = true;
         this.error = '';
@@ -107,6 +116,9 @@ export class TaskFormComponent implements OnInit {
     }
 
     onCancelTask(task): void {
+        if (this.user.type !== 'Admin') {
+            return;
+        }
         const dialogRef = this.dialog.open(DeleteTaskComponent, {
             data: { type: 'task', task: task}
         });
@@ -142,11 +154,17 @@ export class TaskFormComponent implements OnInit {
     }
 
     onRemoveUserTask (user: User, task: Task) {
+        if (this.user.type !== 'Admin') {
+            return;
+        }
         this.success = '';
         const dialogRef = this.dialog.open(DeleteTaskComponent, {
             data: {user: user, task: task, type: 'userTask'}
         });
         dialogRef.afterClosed().subscribe(result => {
+            if (!result) {
+                return;
+            }
             switch (result.status) {
                 case Constant.DELETE_SUCCESS:
                     this.success = result.mes;

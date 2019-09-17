@@ -8,6 +8,8 @@ import {ProjectFormComponent} from './project-from/project-form.component';
 import {Group} from '../model/group';
 import {Constant} from '../model/constant';
 import {DeleteGroupProjectComponent} from './delete-group-project/delete-group-project.component';
+import {UserService} from '../services/user.service';
+import {User} from '../model/user';
 
 @Component({
   selector: 'app-project',
@@ -20,11 +22,14 @@ export class ProjectComponent implements OnInit {
     error = '';
     isEmpty = false;
     loadEnd = false;
+    user: User;
 
     constructor(public dialog: MatDialog, private projectService: ProjectService, private router: Router,
-                private snackBar: MatSnackBar) { }
+                private snackBar: MatSnackBar, private userService: UserService) {
+    }
 
     ngOnInit() {
+        this.user = this.userService.user;
         this.getProjects();
     }
     getProjects() {
@@ -120,6 +125,9 @@ export class ProjectComponent implements OnInit {
     }
 
     onRemoveGroupProject (group: Group, project: Project) {
+        if (this.user.type !== 'Admin') {
+            return;
+        }
         const dialogRef = this.dialog.open(DeleteGroupProjectComponent, {
             data: {project: project, group: group}
         });

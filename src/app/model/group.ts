@@ -2,6 +2,7 @@ export class Group {
     private _keyy: String = '';
     private _name: String = '';
     private _description: String = '';
+    private _unread: number;
 
     constructor(keyy: String, name: String, description: String) {
         this._keyy = keyy;
@@ -31,5 +32,13 @@ export class Group {
 
     set description(value: String) {
         this._description = value;
+    }
+
+    get unread(): number {
+        return this._unread;
+    }
+
+    set unread(value: number) {
+        this._unread = value;
     }
 }

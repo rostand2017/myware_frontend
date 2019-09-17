@@ -9,6 +9,8 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Constant} from '../model/constant';
 import {TaskFormComponent} from './task-form/task-form.component';
 import {Location} from '@angular/common';
+import {UserService} from '../services/user.service';
+import {User} from '../model/user';
 
 @Component({
   selector: 'app-task',
@@ -25,12 +27,14 @@ export class TaskComponent implements OnInit {
     error = '';
     loadEnd = false;
     submitting = false;
+    user: User;
 
     constructor(public dialog: MatDialog, private taskService: TaskService, private location: Location,
                 private router: Router, private route: ActivatedRoute, private formBuilder: FormBuilder,
-                private snackBar: MatSnackBar) { }
+                private snackBar: MatSnackBar, private userService: UserService) { }
 
     ngOnInit() {
+        this.user = this.userService.user;
         this.getLists();
         this.initForm();
     }
@@ -54,6 +58,9 @@ export class TaskComponent implements OnInit {
     }
 
     openDialog(list: List) {
+        if (this.user.type !== 'Admin') {
+            return;
+        }
         const dialogRef = this.dialog.open(TaskFormComponent, {
             data: { task: new Task('', '', '', false), list: list,
             projectKey: this.route.snapshot.paramMap.get('project')
@@ -153,7 +160,7 @@ export class TaskComponent implements OnInit {
     }
 
     onEditList(list: List) {
-        if (!list.name.trim()) {
+        if (!list.name.trim() || this.user.type !== 'Admin' ) {
             return;
         }
         this.taskService.addList(list, this.route.snapshot.paramMap.get('project')).subscribe(
@@ -174,11 +181,16 @@ export class TaskComponent implements OnInit {
     }
 
     onDeleteList(list: List) {
-        console.log('key: ' + list.keyy);
+        if (this.user.type !== 'Admin') {
+            return;
+        }
         const dialogRef = this.dialog.open(DeleteTaskComponent, {
             data: { type: 'list', list: list}
         });
         dialogRef.afterClosed().subscribe(result => {
+            if (!result) {
+                return;
+            }
             switch (result.status) {
                 case Constant.DELETE_SUCCESS:
                     this.snackBar.open(result.mes, 'ok', {

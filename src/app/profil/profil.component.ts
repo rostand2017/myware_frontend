@@ -60,6 +60,7 @@ export class ProfilComponent implements OnInit {
           }
       );
   }
+
   onSubmitForm() {
       this.submitted = true;
       this.error = '';

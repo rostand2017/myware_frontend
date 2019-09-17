@@ -1,3 +1,5 @@
+import {SafeUrl} from '@angular/platform-browser';
+
 export class ReceiveMessage {
     private _message: String;
     private _type: String;
@@ -7,6 +9,9 @@ export class ReceiveMessage {
     private _senderKey: String;
     private _hour: String;
     private _date: String;
+    private _dateToShow: Date;
+    private _sent = true;
+    private _thumbnail: SafeUrl;
 
     constructor(message: String, type: String, link: String, senderName: String,
                 senderSubname: String, senderKey: String, hour: String, date: String) {
@@ -82,5 +87,29 @@ export class ReceiveMessage {
 
     set date(value: String) {
         this._date = value;
+    }
+
+    get dateToShow(): Date {
+        return this._dateToShow;
+    }
+
+    set dateToShow(value: Date) {
+        this._dateToShow = value;
+    }
+
+    get sent(): boolean {
+        return this._sent;
+    }
+
+    set sent(value: boolean) {
+        this._sent = value;
+    }
+
+    get thumbnail(): SafeUrl {
+        return this._thumbnail;
+    }
+
+    set thumbnail(value: SafeUrl) {
+        this._thumbnail = value;
     }
 }
