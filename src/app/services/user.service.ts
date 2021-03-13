@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {User} from '../model/user';
-import {Observable, of} from 'rxjs';
+import {Observable, of, Subscriber} from 'rxjs';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {tap, catchError, map} from 'rxjs/internal/operators';
 import {Constant} from '../model/constant';
@@ -11,7 +11,6 @@ import {Form} from '@angular/forms';
   providedIn: 'root'
 })
 export class UserService {
-    private heroesUrl = 'api/user';
     public user: User;
     httpOptions = {
         headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
@@ -19,6 +18,9 @@ export class UserService {
     constructor(private http: HttpClient, private router: Router) { }
 
     isAuthenticated(): Observable<boolean> {
+      if (this.user) {
+          return of(true);
+      }
       return this.http.get<User>(Constant.BASE_URL + 'user/me', {withCredentials: true}).pipe(
           map(
               (user) => {
@@ -27,6 +29,12 @@ export class UserService {
               }
           )
       );
+    }
+    getCurrentUser(): Observable<User> {
+      if (this.user) {
+          return of(this.user);
+      }
+      return this.http.get<User>(Constant.BASE_URL + 'user/me');
     }
     getActiveUsers(): Observable<User[]> {
         return this.http.get<User[]>(Constant.BASE_URL + 'user/active');
@@ -65,9 +73,6 @@ export class UserService {
     uploadPhoto(data: FormData): Observable<any> {
       return this.http.post<any>(Constant.BASE_URL + 'user/uploadphoto', data);
     }
-    getCurrentUser(): Observable<User> {
-        return this.http.get<User>(Constant.BASE_URL + 'user/me', {withCredentials: true});
-    }
     delete(userKey: String): Observable<any> {
       return this.http.post<any>(Constant.BASE_URL + 'user/remove', {keyy: userKey},
           this.httpOptions).pipe(
@@ -77,6 +82,7 @@ export class UserService {
     }
     disconnect() {
         localStorage.removeItem('token');
+        this.user = null;
         this.router.navigate(['/']);
     }
 

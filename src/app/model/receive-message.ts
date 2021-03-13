@@ -12,6 +12,9 @@ export class ReceiveMessage {
     private _dateToShow: Date;
     private _sent = true;
     private _thumbnail: SafeUrl;
+    private _discussionKey: String;
+    private _discussionName: String;
+    private _discussionType: String;
 
     constructor(message: String, type: String, link: String, senderName: String,
                 senderSubname: String, senderKey: String, hour: String, date: String) {
@@ -111,5 +114,29 @@ export class ReceiveMessage {
 
     set thumbnail(value: SafeUrl) {
         this._thumbnail = value;
+    }
+
+    get discussionKey(): String {
+        return this._discussionKey;
+    }
+
+    set discussionKey(value: String) {
+        this._discussionKey = value;
+    }
+
+    get discussionName(): String {
+        return this._discussionName;
+    }
+
+    set discussionName(value: String) {
+        this._discussionName = value;
+    }
+
+    get discussionType(): String {
+        return this._discussionType;
+    }
+
+    set discussionType(value: String) {
+        this._discussionType = value;
     }
 }

@@ -52,6 +52,8 @@ import { RemoveUserComponent } from './chat/remove-user/remove-user.component';
 import {TokenInterceptorService} from './services/token-interceptor.service';
 import { DeleteGroupProjectComponent } from './project/delete-group-project/delete-group-project.component';
 import {SocketIoModule} from 'ngx-socket-io';
+import { environment } from 'src/environments/environment';
+import { NgxAgoraModule } from 'ngx-agora';
 
 @NgModule({
   declarations: [
@@ -131,7 +133,8 @@ import {SocketIoModule} from 'ngx-socket-io';
     MatSnackBarModule,
     ReactiveFormsModule,
     FormsModule,
-    SocketIoModule.forRoot({ url: 'http://localhost:8080', options: {} }),
+    SocketIoModule.forRoot({ url: 'http://localhost:3000', options: {} }),
+    NgxAgoraModule.forRoot({ AppID: environment.agora.appId }),
   ],
   providers: [
       UserService,

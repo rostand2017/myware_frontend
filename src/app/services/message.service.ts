@@ -37,8 +37,9 @@ export class MessageService {
         return this.http.post<any>(Constant.BASE_URL + 'discussionType', {keyy: discussionKey}, this.httpOptions);
     }
 
-    sendMessage(message: String, discussionKey: String): Observable<any> {
-        return this.http.post<any>(Constant.BASE_URL + 'message/send', {message: message, keyy: discussionKey},
+    sendMessage(message: String, discussionKey: String, type: String): Observable<any> {
+        return this.http.post<any>(Constant.BASE_URL + 'message/send',
+            {message: message, keyy: discussionKey, type: type},
             this.httpOptions);
     }
     addFile(data: FormData): Observable<any> {

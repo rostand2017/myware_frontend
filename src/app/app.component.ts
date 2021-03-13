@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, ElementRef, ViewChild} from '@angular/core';
 import {UserService} from './services/user.service';
 import {NavigationStart, Router} from '@angular/router';
 
@@ -8,6 +8,7 @@ import {NavigationStart, Router} from '@angular/router';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
+  @ViewChild('menu') menus: ElementRef;
   title = 'myware';
   auth = false;
   constructor(private userService: UserService, private router: Router) {
@@ -19,7 +20,6 @@ export class AppComponent {
       });
   }
   isAuth() {
-    console.log('Again');
     this.userService.isAuthenticated().subscribe(
         value => this.auth = value
     );

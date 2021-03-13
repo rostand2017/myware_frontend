@@ -12,6 +12,7 @@ import {Constant} from '../model/constant';
 import {FileService} from '../services/file.service';
 import {DomSanitizer} from '@angular/platform-browser';
 import {Socket} from 'ngx-socket-io';
+import {AgoraClient, ClientEvent, NgxAgoraService, Stream, StreamEvent} from 'ngx-agora';
 
 @Component({
   selector: 'app-chat',
@@ -26,6 +27,7 @@ export class ChatComponent implements OnInit {
   discussionKey: String;
   discussionObject: any = {};
   @ViewChild('sendMessageContainer') elt: ElementRef;
+  @ViewChild('inputMessage') inputMessage: ElementRef;
   todayDate = new Date();
   loadEndUser: boolean;
   loadEndMessage: boolean;
@@ -35,18 +37,32 @@ export class ChatComponent implements OnInit {
   errorMessage = '';
   errorLoadMessage = '';
   errorUser = '';
-  messageHandle: number;
-  navigationEnd: boolean;
+  callEnd = true;
   files: any;
-  constructor(public dialog: MatDialog, private userService: UserService,
+
+  localCallId = 'agora_local';
+  remoteCalls: string[] = [];
+
+  private client: AgoraClient;
+  private localStream: Stream;
+  private uid: number;
+
+  constructor(public dialog: MatDialog, private userService: UserService, private ngxAgoraService: NgxAgoraService,
               private messageService: MessageService, private groupService: GroupService,
               private router: ActivatedRoute, private fileService: FileService, private socket: Socket,
               private snackBar: MatSnackBar, private sanitizer: DomSanitizer, private routerr: Router) {
+      this.uid = Math.floor(Math.random() * 100);
   }
 
   ngOnInit() {
     this.discussionKey = this.router.snapshot.paramMap.get('key');
     this.currentUser = this.userService.user;
+      this.userService.getCurrentUser().subscribe(
+          (user) => {
+              this.currentUser = user;
+              this.getMessages();
+          }
+      );
     this.messageService.getDiscussionType(this.discussionKey).subscribe(
         (data) => {
             this.discussionObject = data;
@@ -55,13 +71,129 @@ export class ChatComponent implements OnInit {
             }
         }
     );
-    // this.userService.getCurrentUser().subscribe(user => this.currentUser = user);
-    this.getMessages();
     this.routerr.events.subscribe((ev) => {
         if (ev instanceof NavigationEnd) {
-            this.navigationEnd = true;
+            // this.socket.removeListener('message');
         }
     });
+  }
+
+  startVideoCall() {
+      this.client = this.ngxAgoraService.createClient({ mode: 'rtc', codec: 'h264' });
+      this.assignClientHandlers();
+      this.callEnd = false;
+      this.localStream = this.ngxAgoraService.createStream({ streamID: this.uid, audio: true, video: true, screen: false });
+      this.assignLocalStreamHandlers();
+      this.initLocalStream(() => this.join(uid => this.publish(), error => console.error(error)));
+  }
+  stopCall() {
+      this.client.leave(
+          () => {
+              console.log('Disconnection');
+              this.client = null;
+              this.localStream.stop();
+              this.remoteCalls = [];
+              this.localStream = null;
+              this.onSendMessage(this.currentUser.subname + '  ' + this.currentUser.name + ' a quitté la conférence',
+                  'user_joint_conference');
+          },
+          error => console.log('Disconnection failed')
+      );
+      this.callEnd = true;
+  }
+  /**
+   * Attempts to connect to an online chat room where users can host and receive A/V streams.
+   */
+  join(onSuccess?: (uid: number | string) => void, onFailure?: (error: Error) => void): void {
+      this.client.join(null, this.discussionObject.name, this.uid, onSuccess, onFailure);
+  }
+
+  /**
+   * Attempts to upload the created local A/V stream to a joined chat room.
+   */
+  publish(): void {
+      this.client.publish(this.localStream, err => console.log('Publish local stream error: ' + err));
+  }
+
+  private assignLocalStreamHandlers(): void {
+    this.localStream.on(StreamEvent.MediaAccessAllowed, () => {
+        console.log('accessAllowed');
+    });
+
+    // The user has denied access to the camera and mic.
+    this.localStream.on(StreamEvent.MediaAccessDenied, () => {
+        console.log('accessDenied');
+    });
+  }
+
+  private initLocalStream(onSuccess?: () => any): void {
+      this.localStream.init(
+          () => {
+            // The user has granted access to the camera and mic.
+            this.localStream.play(this.localCallId);
+            if (onSuccess) {
+                onSuccess();
+            }
+          },
+          err => console.error('getUserMedia failed', err)
+      );
+  }
+
+  private assignClientHandlers(): void {
+    this.client.on(ClientEvent.LocalStreamPublished, evt => {
+        console.log('Publish local stream successfully');
+        this.onSendMessage(this.currentUser.subname + '  ' + this.currentUser.name + ' a rejoint la conférence',
+            'user_joint_conference');
+    });
+
+    this.client.on(ClientEvent.Error, error => {
+        console.log('Got error msg:', error.reason);
+        if (error.reason === 'DYNAMIC_KEY_TIMEOUT') {
+            this.client.renewChannelKey(
+                '',
+                () => console.log('Renewed the channel key successfully.'),
+                renewError => console.error('Renew channel key failed: ', renewError)
+            );
+        }
+    });
+
+    this.client.on(ClientEvent.RemoteStreamAdded, evt => {
+        const stream = evt.stream as Stream;
+        this.client.subscribe(stream, { audio: true, video: true }, err => {
+            console.log('Subscribe stream failed', err);
+        });
+    });
+
+    this.client.on(ClientEvent.RemoteStreamSubscribed, evt => {
+        const stream = evt.stream as Stream;
+        const id = this.getRemoteId(stream);
+        if (!this.remoteCalls.length) {
+            this.remoteCalls.push(id);
+            setTimeout(() => stream.play(id), 1000);
+        }
+    });
+
+    this.client.on(ClientEvent.RemoteStreamRemoved, evt => {
+        const stream = evt.stream as Stream;
+        if (stream) {
+            stream.stop();
+            this.remoteCalls = [];
+            console.log(`Remote stream is removed ${stream.getId()}`);
+        }
+    });
+
+    this.client.on(ClientEvent.PeerLeave, evt => {
+        const stream = evt.stream as Stream;
+        if (stream) {
+            stream.stop();
+            this.remoteCalls = this.remoteCalls.filter(call => call !== `${this.getRemoteId(stream)}`);
+            console.log(`${evt.uid} left from this channel`);
+        }
+    });
+  }
+
+  private getRemoteId(stream: Stream): string {
+        return `agora_remote-${stream.getId()}`;
   }
 
   getUsers() {
@@ -102,7 +234,7 @@ export class ChatComponent implements OnInit {
                   m => {
                       const date = new Date(parseInt(m.date.toString(), 10) * 1000);
                       m.dateToShow = date;
-                      m.hour = date.getHours() + ':' + date.getMinutes();
+                      m.hour = date.toLocaleTimeString().substring(0, 5);
                       if (m.type === 'image') {
                           this.fileService.downloadThumbnail(m.link).subscribe(
                               value => {
@@ -128,44 +260,34 @@ export class ChatComponent implements OnInit {
   }
 
   getNewMessages() {
-      this.messageHandle = setTimeout( () => {
-          if (this.messages.length !== 0 && this.messages[this.messages.length - 1].date === '') {
-              this.getNewMessages();
-              return;
-          }
-          const lastDate = (this.messages.length !== 0) ? this.messages[this.messages.length - 1].date : '';
-          this.messageService.getNewMessages(lastDate, this.discussionKey).subscribe(
-              messages1 => {
-                  if (messages1.length > 0 && this.isEmptyMessage) {
+      this.socket.fromEvent('message').subscribe(
+          (message: any) => {
+              console.log('Arrived');
+              if (this.routerr.url === '/discussion/' + message._discussionKey ||
+                  (this.routerr.url === '/discussion/' + message._senderKey && message._discussionType !== 'group')) {
+                  if (this.isEmptyMessage) {
                       this.isEmptyMessage = false;
                   }
-                  messages1.forEach(
-                      value => {
-                          const date = new Date(parseInt(value.date.toString(), 10) * 1000);
-                          value.dateToShow = date;
-                          value.hour = date.toLocaleTimeString().substring(0, 5);
-                          this.messages.push(value);
-                          if (value.type === 'image') {
-                              this.fileService.downloadThumbnail(value.link).subscribe(
-                                  data => {
-                                      value.thumbnail = this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(data));
-                                  },
-                                  error => {
-                                      // error
-                                  }
-                              );
+                  const m: ReceiveMessage = new ReceiveMessage('', '', '', '',
+                      '', '', '', '');
+                  Object.assign(m, message);
+                  const date = new Date(parseInt(m.date.toString(), 10) * 1000);
+                  m.dateToShow = date;
+                  m.hour = date.toLocaleTimeString().substring(0, 5);
+                  this.messages.push(m);
+                  if (m.type === 'image') {
+                      this.fileService.downloadThumbnail(message._link).subscribe(
+                          data => {
+                              message.thumbnail = this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(data));
+                          },
+                          error => {
+                              // error
                           }
-                      }
-                  );
-                  if (this.navigationEnd) {
-                      return;
+                      );
                   }
-                  this.getNewMessages();
-              },
-          error => this.getNewMessages()
-          );
-          // this.elt.nativeElement.scrollTo(0, this.elt.nativeElement.scrollHeight - this.elt.nativeElement.clientHeight );
-      }, 1000);
+              }
+          }
+      );
   }
 
   getMoreMessages(event) {
@@ -278,12 +400,15 @@ export class ChatComponent implements OnInit {
             this.messageService.addFile(data).subscribe(
                 value => {
                     if ( value.status === 0) {
-                        this.socket.emit('message', value.message);
+                        message.discussionKey = this.discussionObject.subname ? this.discussionObject.keyy : this.discussionKey;
+                        message.discussionName = this.discussionObject.subname ? this.currentUser.name : this.discussionObject.name ;
+                        message.discussionType = this.discussionObject.subname ? 'direct' : 'group';
                         const date = new Date(parseInt(value.message.date.toString(), 10) * 1000);
                         message.date = value.message.date;
-                        message.hour = date.toLocaleTimeString().substring(0, 5);
-                        message.message = value.message.message;
                         message.link = value.message.link;
+                        message.message = value.message.message;
+                        this.socket.emit('message', message);
+                        message.hour = date.toLocaleTimeString().substring(0, 5);
                     } else {
                         message.sent = false;
                     }
@@ -321,25 +446,30 @@ export class ChatComponent implements OnInit {
       );
   }
 
-  onSendMessage(inputMessage: HTMLInputElement) {
-      if (inputMessage.value.trim()) {
-          const message = new ReceiveMessage( inputMessage.value, 'message', '',
+  onSendMessage(inputMessage: string, type?: string) {
+      if (inputMessage.trim()) {
+          const message = new ReceiveMessage( inputMessage, '', '',
               this.currentUser.name, this.currentUser.subname, this.currentUser.keyy, '--:--', '');
+          message.type = type ? type : 'message';
           message.dateToShow = new Date();
           this.messages.push(message);
           this.isEmptyMessage = false;
-          this.messageService.sendMessage(inputMessage.value, this.discussionKey).subscribe(
+          this.messageService.sendMessage(inputMessage, this.discussionKey, message.type).subscribe(
               (data) => {
-                  this.socket.emit('message', data);
-                  const date = new Date(parseInt(data.date.toString(), 10) * 1000);
                   message.date = data.date;
+                  message.discussionKey = this.discussionObject.subname ? this.discussionObject.keyy : data.keyy;
+                  message.discussionName = this.discussionObject.subname ? this.currentUser.name : this.discussionObject.name ;
+                  message.discussionType = this.discussionObject.subname ? 'direct' : 'group';
+                  this.socket.emit('message', message);
+
+                  const date = new Date(parseInt(data.date.toString(), 10) * 1000);
                   message.hour = date.toLocaleTimeString().substring(0, 5);
               },
               () => {
                   message.sent = false;
               }
           );
-          inputMessage.value = '';
+          this.inputMessage.nativeElement.value = '';
           setTimeout(
               () => {
                   this.elt.nativeElement.scrollTo(0, this.elt.nativeElement.scrollHeight - this.elt.nativeElement.clientHeight );
@@ -350,13 +480,13 @@ export class ChatComponent implements OnInit {
 
   onEnterSendMessage (event, inputMessage) {
       if (event.keyCode === 13) {
-          this.onSendMessage(inputMessage);
+          this.onSendMessage(inputMessage.value);
       }
   }
 
   resendMessage(message: ReceiveMessage) {
       message.sent = true;
-      this.messageService.sendMessage(message.message, this.discussionKey).subscribe(
+      this.messageService.sendMessage(message.message, this.discussionKey, message.type).subscribe(
           (data) => {
               this.socket.emit('message', data);
               const date = new Date();

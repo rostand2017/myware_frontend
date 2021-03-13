@@ -1,8 +1,16 @@
 <mat-toolbar color="primary">
-  <span>MyWare</span>
+  <button mat-button (click)="onToggleMenu()"><mat-icon>arrow_back</mat-icon>MyWare</button>
   <!-- This fills the remaining space of the current row -->
   <span class="example-fill-remaining-space"></span>
-  <button mat-button [matMenuTriggerFor]="menu"><mat-icon style="font-size: 30px">account_circle</mat-icon><mat-icon>arrow_drop_down</mat-icon></button>
+  <button mat-button [matMenuTriggerFor]="menu">
+    <mat-icon style="font-size: 30px" *ngIf="!user.imageUrl">account_circle</mat-icon>
+
+    <span [matMenuTriggerFor]="menu" class="text-center" *ngIf="user.imageUrl" style="display: inline-block; width: 50px;height: 50px; border-radius: 50px;overflow: hidden;">
+      <img [src]="user.imageUrl" alt="Votre photo" style="max-height: 50px">
+    </span>
+
+    <mat-icon>arrow_drop_down</mat-icon>
+  </button>
   <mat-menu #menu="matMenu">
     <button mat-menu-item (click)="onProfil()">Mon profil</button>
     <button mat-menu-item (click)="onChangePassword()">Changez de mot de passe</button>

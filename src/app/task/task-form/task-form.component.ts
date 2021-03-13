@@ -95,6 +95,7 @@ export class TaskFormComponent implements OnInit {
         const formValue: Task = this.taskForm.value;
         const key = this.data.task.keyy;
         formValue.keyy = key;
+        console.log(formValue);
         this.taskService.add(formValue, this.data.list.keyy).subscribe( (data) => {
                 this.data.task = data.task;
                 if (data.status === 0) {

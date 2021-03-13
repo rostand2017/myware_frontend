@@ -1,9 +1,9 @@
-<div class="p-2">
+<div class="p-2" style="height: 100%">
   <div class="m-4">
     <div class="col-md-12">
       <h4>
         Projets
-        <button *ngIf="user.type == 'Admin'" (click)="openDialog()" class="text-light text-center float-right clearfix" style="background: #673ab7;" mat-icon-button>+</button>
+        <button *ngIf="user && user.type == 'Admin'" (click)="openDialog()" class="text-light text-center float-right clearfix" style="background: #673ab7;" mat-icon-button>+</button>
       </h4>
     </div>
   </div>
@@ -11,7 +11,9 @@
   <mat-progress-bar mode="indeterminate" *ngIf="!loadEnd"></mat-progress-bar>
   <div class="text-center" *ngIf="!loadEnd"><span>Patientez un instant ...</span></div>
   <div class="text-center" *ngIf="error!=''"><mat-error>{{error}}</mat-error></div>
-  <div class="text-center" *ngIf="isEmpty"><span>Aucun projet en cours</span></div>
+  <div class="text-center" *ngIf="isEmpty" style="height: 100%;background-image: url('../../assets/svg/project.svg'); background-position: center; background-repeat: no-repeat">
+    <span>Aucun projet en cours</span>
+  </div>
     <mat-card role="group" style="display: inline-block;" class="m-2" *ngFor="let project of projects; let i = index" tabindex="{{i}}">
       <mat-card-title>
         <a routerLink="/project/{{project.keyy}}">{{project.name}}</a>

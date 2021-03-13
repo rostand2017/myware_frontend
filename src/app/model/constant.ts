@@ -9,5 +9,5 @@ export class Constant {
     static DELETE_FAILED = 8;
     static OPERATION_CANCELLED = 9;
     static SHARE_SUCCESS = 9;
-    static BASE_URL = 'http://myware.test/app_dev.php/';
+    static BASE_URL = 'http://myware.test/';
 }

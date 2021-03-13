@@ -30,7 +30,8 @@ export class AuthComponent implements OnInit {
           (data) => {
             if (data.status === 0) {
                 localStorage.setItem('token', data.token);
-                this.router.navigate(['groups']);
+                window.location.assign('/groups');
+                // this.router.navigate(['groups']);
             } else {
               this.error = data.mes;
             }

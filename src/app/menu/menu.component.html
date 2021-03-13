@@ -1,12 +1,19 @@
+<div class="p-2">
+  <div class="bg-light shadow-lg" style="display: inline-block;width: 100px; border-radius: 100px;overflow: hidden;">
+    <img src="../../assets/svg/logo_myware.svg" alt="MyWare" style="max-height: 100px">
+  </div>
+  <span class="text-light">MyWare</span>
+</div>
+
 <mat-action-list>
-  <button mat-list-item (click)="gotoFiles()" style="color: #eaeaea;"><mat-icon>folder</mat-icon>Fichiers</button>
+  <button mat-list-item (click)="gotoFiles()" style="color: #eaeaea;"><mat-icon>folder</mat-icon> Fichiers</button>
   <button mat-list-item (click)="gotoGroups()" style="color: #eaeaea;">
     <mat-icon>group</mat-icon> Groupes
-    <button class="ml-2" mat-icon-button style="background: #e83246" *ngIf="tableCount && tableCount.messages.count > 0">{{tableCount.messages.count}}</button>
+    <button class="ml-2" mat-icon-button style="background: #e83246" *ngIf="countUnreadMessage > 0">{{countUnreadMessage}}</button>
   </button>
   <button mat-list-item (click)="gotoDiscussion()" style="color: #eaeaea;">
     <mat-icon>chat</mat-icon> Discussion directe
-    <button class="ml-2" mat-icon-button style="background: #e83246" *ngIf="tableCount && tableCount.directMessages.count > 0">{{tableCount.directMessages.count}}</button>
+    <button class="ml-2" mat-icon-button style="background: #e83246" *ngIf="countUnreadDirectMessage > 0">{{countUnreadDirectMessage}}</button>
   </button>
   <button mat-list-item (click)="gotoTask()" style="color: #eaeaea;"><mat-icon>alarm</mat-icon> Tâches </button>
   <button mat-list-item *ngIf="user && user.type == 'Admin'" (click)="gotoUsers()" style="color: #eaeaea;"><mat-icon>face</mat-icon> Gerer les utilisateurs </button>

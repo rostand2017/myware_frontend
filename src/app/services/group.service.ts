@@ -10,7 +10,6 @@ import {Constant} from '../model/constant';
   providedIn: 'root'
 })
 export class GroupService {
-  private groupUrl = 'api/group';
   httpOptions = {
       headers: new HttpHeaders({ 'Content-Type': 'application/json' })
   };
@@ -44,7 +43,7 @@ export class GroupService {
         {groupKey: groupKey, keyy: userKey}, this.httpOptions);
   }
   delete(groupKey: String): Observable<any> {
-      return this.http.post<any>('', {key: groupKey}, this.httpOptions);
+      return this.http.post<any>(Constant.BASE_URL + 'group/remove', {keyy: groupKey}, this.httpOptions);
   }
 
   private handleError<T> (operation = 'operation', result?: T) {

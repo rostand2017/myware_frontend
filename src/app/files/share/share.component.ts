@@ -7,6 +7,8 @@ import {User} from '../../model/user';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
 import {Group} from '../../model/group';
 import {GroupService} from '../../services/group.service';
+import {Socket} from 'ngx-socket-io';
+import {ReceiveMessage} from '../../model/receive-message';
 
 @Component({
   selector: 'app-share',
@@ -29,7 +31,7 @@ export class ShareComponent implements OnInit {
 
     constructor(public dialog: MatDialog, public dialogRef: MatDialogRef<ShareComponent>, @Inject(MAT_DIALOG_DATA) public _data: any,
                 private fileService: FileService, private groupService: GroupService, private formBuilder: FormBuilder,
-                private userService: UserService) {
+                private userService: UserService, private socket: Socket) {
         this.data = _data;
     }
 
@@ -89,6 +91,15 @@ export class ShareComponent implements OnInit {
             this.fileService.shareFile(formValue).subscribe( (data: any) => {
                     if (data.status === 0) {
                         this.dialogRef.close({status: Constant.SHARE_SUCCESS, mes: data.mes});
+                        data.discussions.forEach(
+                            (discussion) => {
+                                const m: ReceiveMessage = new ReceiveMessage('', '', '', '',
+                                    '', '', '', '');
+                                Object.assign(m, discussion);
+                                m.discussionName = this.userService.user.subname + ' ' + this.userService.user.name;
+                                this.socket.emit('message', m);
+                            }
+                        );
                     } else {
                         this.error = data.mes;
                     }
@@ -102,6 +113,15 @@ export class ShareComponent implements OnInit {
         } else {
             this.fileService.shareFolder(formValue).subscribe( (data: any) => {
                         if (data.status === 0) {
+                            data.discussions.forEach(
+                                (discussion: ReceiveMessage) => {
+                                    const m: ReceiveMessage = new ReceiveMessage('', '', '', '',
+                                        '', '', '', '');
+                                    Object.assign(m, discussion);
+                                    m.discussionName = this.userService.user.subname + ' ' + this.userService.user.name;
+                                    this.socket.emit('message', m);
+                                }
+                            );
                             this.dialogRef.close({status: Constant.SHARE_SUCCESS, mes: data.mes});
                         } else {
                             this.error = data.mes;
@@ -114,7 +134,6 @@ export class ShareComponent implements OnInit {
                 () => this.submitting = false
             );
         }
-        console.log(formValue);
     }
 
 

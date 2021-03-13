@@ -107,7 +107,6 @@ export class TaskComponent implements OnInit {
                         duration: 2000,
                     });
                     const taskResult = result.task;
-                    console.log(task);
                     task.description = taskResult.description;
                     task.endDate = taskResult.endDate;
                     task.isCompleted = taskResult.isCompleted;

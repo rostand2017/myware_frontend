@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import {Router} from '@angular/router';
+import {NavigationEnd, NavigationStart, Router} from '@angular/router';
 import {UserService} from '../services/user.service';
 import {User} from '../model/user';
 import {MessageService} from '../services/message.service';
 import {Socket} from 'ngx-socket-io';
+import {ReceiveMessage} from '../model/receive-message';
+import {MatSnackBar} from '@angular/material';
 
 @Component({
   selector: 'app-menu',
@@ -18,27 +20,67 @@ export class MenuComponent implements OnInit {
     messages: {},
     directMessages: {}
   };
-  constructor(private router: Router, private userService: UserService,
+  constructor(private router: Router, private userService: UserService, private snackBar: MatSnackBar,
               private messageService: MessageService, private socket: Socket) { }
 
   ngOnInit() {
-      this.user = this.userService.user;
-      this.getUnreadMessages();
+      this.userService.getCurrentUser().subscribe(
+          (user) => {
+              this.user = user;
+              this.getUnreadMessages();
+          },
+          error2 => {},
+      );
+      this.router.events.subscribe((ev) => {
+          if (ev instanceof NavigationStart) {
+              if (this.router.url.match('/discussion')) {
+                  this.countUnreadDirectMessage = 0;
+              }
+              if (this.router.url.match('/groups')) {
+                  this.countUnreadMessage = 0;
+              }
+          }
+      });
   }
 
   getAllNewMessage() {
+      this.socket.emit('connects', this.user);
+      this.socket.fromEvent('connectedUser').subscribe(
+          (user: User) => {
+              console.log(user);
+              console.log(user.subname);
+              this.snackBar.open(user.subname + ' ' + user.name + ' est en ligne', 'ok',
+                  {duration: 2000});
+          }
+      );
+      this.socket.fromEvent('disconnectedUser').subscribe(
+          (user: User) => {
+              console.log(user);
+              this.snackBar.open(user.subname + ' ' + user.name + ' s\'est déconnecté', 'ok',
+                  {duration: 2000});
+          }
+      );
       Notification.requestPermission().then(
           value => {
               if (value === 'granted') {
                   this.socket.fromEvent('message').subscribe(
-                      message => {
-                          const n = new Notification(message.senderName.toString(), {body: message.message.toString()});
-                          if (message.type === 'group') {
-                              this.countUnreadMessage++;
-                              n.onclick = () => this.gotoDirectDiscussion(message.discussionKey);
-                          } else {
-                              this.countUnreadDirectMessage++;
-                              n.onclick = () => this.gotoDirectDiscussion(message.discussionKey);
+                      (message) => {
+                          console.log(message);
+                          const m: ReceiveMessage = new ReceiveMessage('', '', '', '',
+                          '', '', '', '');
+                          Object.assign(m, message);
+                          if (!(this.router.url === '/discussion/' + m.discussionKey && m.discussionType === 'group' ||
+                              this.router.url === '/discussion/' + m.senderKey && m.discussionType !== 'group') ) {
+                              const n = new Notification(m.senderName.toString(),
+                                  {body: m.message.toString(), icon: '../../favicon.ico'});
+                              n.onclick = () => window.location.assign(
+                                  (m.discussionType === 'group') ? '/discussion/' + m.discussionKey : '/discussion/' + m.senderKey
+                              );
+                              if (m.discussionType === 'group') {
+                                  this.countUnreadMessage++;
+                              } else {
+                                  this.countUnreadDirectMessage++;
+                              }
                           }
                       }
                   );
@@ -65,7 +107,7 @@ export class MenuComponent implements OnInit {
                   }, 10000);
                   */
               } else {
-                  console.log('Accès refusée aux otifications');
+                  console.log('Accès refusé aux notifications');
               }
           }
       );
@@ -93,11 +135,6 @@ export class MenuComponent implements OnInit {
   getUnreadMessages() {
       this.messageService.getCountUnreadMessages().subscribe(
           (data) => {
-              /*this.tableCount.messages.lastDate = data.messages.lastDate * 1000;
-              this.tableCount.messages.count = data.messages.count;
-              this.tableCount.directMessages.lastDate = data.directMessages.lastDate * 1000;
-              this.tableCount.directMessages.count = data.directMessages.count;
-              */
               this.countUnreadMessage = data.messages.count;
               this.countUnreadDirectMessage = data.directMessages.count;
               this.getAllNewMessage();

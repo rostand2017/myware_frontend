@@ -29,7 +29,9 @@ export class ProjectComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.user = this.userService.user;
+        this.userService.getCurrentUser().subscribe(
+            user => this.user = user
+        );
         this.getProjects();
     }
     getProjects() {

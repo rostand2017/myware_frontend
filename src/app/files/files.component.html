@@ -1,18 +1,20 @@
 <div class="col-md-12">
-  <h4 class="m-2">Mes fichiers
-    <button class="float-right" mat-icon-button [matMenuTriggerFor]="menu"><mat-icon>more_vert</mat-icon></button>
-    <mat-menu #menu="matMenu">
-      <button mat-menu-item (click)="openDialog(folder)">Créer un dossier</button>
-      <button mat-menu-item (click)="fileInput.click()">
-        <span>Ajouter un fichier</span>
-        <input #fileInput type="file" multiple="multiple" (change)="onFileInput($event)" style="display:none;" />
-      </button>
-    </mat-menu>
-  </h4>
-  <div class="">
-    <!--<button mat-button (click)="onBack()" [disabled]="isDisabled()"><mat-icon>arrow_back</mat-icon></button>-->
-    <button class="breadcrumb-item" mat-button (click)="openFolder(rootFolder, true)" [disabled]="isDisabled(rootFolder)">/</button>
-    <button class="" *ngFor="let folder of breadCrumbFolders" mat-button (click)="openFolder(folder, true)" [disabled]="isDisabled(folder)">{{folder.name}}</button>
+  <div>
+    <h4 class="m-2">Mes fichiers
+      <button class="float-right" mat-icon-button [matMenuTriggerFor]="menu"><mat-icon>more_vert</mat-icon></button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="openDialog(folder)">Créer un dossier</button>
+        <button mat-menu-item (click)="fileInput.click()">
+          <span>Ajouter un fichier</span>
+          <input #fileInput type="file" multiple="multiple" (change)="onFileInput($event)" style="display:none;" />
+        </button>
+      </mat-menu>
+    </h4>
+    <div class="">
+      <!--<button mat-button (click)="onBack()" [disabled]="isDisabled()"><mat-icon>arrow_back</mat-icon></button>-->
+      <button class="breadcrumb-item" mat-button (click)="openFolder(rootFolder, true)" [disabled]="isDisabled(rootFolder)">/</button>
+      <button class="" *ngFor="let folder of breadCrumbFolders" mat-button (click)="openFolder(folder, true)" [disabled]="isDisabled(folder)">{{folder.name}}</button>
+    </div>
   </div>
   <mat-progress-bar mode="indeterminate" *ngIf="!loadEndFiles || !loadEndFolders || !loadEndUpload"></mat-progress-bar>
   <div class="text-center" *ngIf="!loadEndFiles || !loadEndFolders"><span>Patientez un instant ...</span></div>
